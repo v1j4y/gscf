@@ -533,7 +533,6 @@ incorporate the hartee potential
 \begin{equation}
 E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
 \end{equation}
-
 **** Hydrogen functions with a potential
 
 ***** Vector Field
@@ -666,21 +665,22 @@ plt.savefig(path)
 
 **** Calculate energy
 #+begin_src python :results silent
-def calcEnergy(ei,urf,tckur,nrf,tck,stoptime=15.0,numpoints=400):
+def calcEnergy(ei,urf,tckur,nrf,tck,t=None,stoptime=60.0,numpoints=3200):
     E = 2*ei
-    t = [stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)]
+    if t is None:
+        t = [stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)]
     h = t[1]-t[0]
-    VHl = [urf(x,tckur)/x for x in t]
-    Nr = [nrf(x,tck) for x in t]
-    eH = np.dot(VHl,Nr)*h
-    E += eH
+    VHl = np.array([urf(x,tckur)/x for x in t])
+    Nr2 = np.array([(nrf(x,tck))**2 for x in t])
+    eH = integrate.simps(VHl*Nr2, x=t)
+    E = E - eH
     return(E)
 #+end_src
 **** SCF cycle code
 #+begin_src python :results silent
 
-stoptime=15.0
-numpoints=400
+stoptime=60.0
+numpoints=3200
 rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
 
 # Get initial density
@@ -689,18 +689,59 @@ E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-0.40)
 # Get initial ur
 x1,urf,tckur = solve_SLP_VH(nrf, tck, t=rr)
 E0 = calcEnergy(E_bound, urf, tckur, nrf, tck)
+E0 = E_bound
 
+E_conv = []
+dE_conv = []
+E_conv.append(2*E0)
+dE_conv.append(2*E0)
 cnt = 0
-while cnt < 5:
+while cnt < 8:
 
     # Get density
     E_bound,x1,nrf,tck = get_energy_and_density_withVH(0, rr, urf, tckur, E=-0.5)
     # Get ur
     x1,urf,tckur = solve_SLP_VH(nrf, tck, t=rr)
-    E1 = calcEnergy(E_bound, urf, tckur, nrf, tck)
+    E1 = calcEnergy(E_bound, urf, tckur, nrf, tck,t=rr)
+    E1 = E_bound
+    E_conv.append(2*E1)
     Ediff = abs(E0-E1)
-    print(f"Iter : {cnt} E = {E1} Diff = {Ediff}")
+    dE_conv.append(Ediff)
+    print(f"Iter : {cnt} E = {E1} Diff = {Ediff} E_bound={E_bound}")
     E0 = E1
 
     cnt += 1
 #+end_src
+*** Figure
+#+begin_src python :results drawer :exports results :noweb yes
+path = "/home/chilkuri/Documents/codes/python/gscf/Fig-4.png"
+
+plt.clf()
+fig = plt.figure()
+gs = fig.add_gridspec(2, hspace=0)
+
+axs = gs.subplots(sharex=True, sharey=False)
+fig.suptitle('Helium atom orbital energies')
+
+axs[0].plot(range(cnt+1), E_conv, marker='.')
+axs[1].plot(range(cnt+1), dE_conv, marker=".", color='r')
+
+lims = [ [-1.5,-0.75],[-1.5,0.2]]
+
+# Hide x labels and tick labels for all but bottom plot.
+for (i,ax) in enumerate(axs):
+    ax.label_outer()
+    ax.set_ylim(lims[i])
+
+axs[0].axhline(y = -0.932, color = 'b', linestyle = '--')
+axs[0].set(ylabel="e (u.a.)")
+axs[1].set(ylabel="de (u.a.)")
+
+plt.savefig(path)
+<<dressPath>>
+#+end_src
+
+#+RESULTS:
+:results:
+[[/home/chilkuri/Documents/codes/python/gscf/Fig-4.png]]
+:end:
