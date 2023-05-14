@@ -328,7 +328,7 @@ E_bound,_,_,_ = get_energy_and_density(0,rr)
 #+end_src
 **** Main
 #+begin_src python :results drawer :exports results :noweb yes
-path = "/home/chilkuri/Documents/codes/python/gscf/Fig-1.png"
+path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-1.png"
 
 plt.clf()
 fig, ax = plt.subplots()
@@ -350,7 +350,7 @@ plt.savefig(path)
 
 #+RESULTS:
 :results:
-[[/home/chilkuri/Documents/codes/python/gscf/Fig-1.png]]
+[[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-1.png]]
 :end:
 
 ** Helium atom
@@ -496,7 +496,7 @@ __,urf,tckur = solve_SLP_VH(nrf, tck, t=rr)
 #+end_src
 **** Main
 #+begin_src python :results drawer :exports results :noweb yes
-path = "/home/chilkuri/Documents/codes/python/gscf/Fig-2.png"
+path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-2.png"
 
 plt.clf()
 fig, ax = plt.subplots()
@@ -518,7 +518,7 @@ plt.savefig(path)
 
 #+RESULTS:
 :results:
-[[/home/chilkuri/Documents/codes/python/gscf/Fig-2.png]]
+[[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-2.png]]
 :end:
 
 *** Self-consistent field cycle
@@ -527,7 +527,7 @@ In order to find the solution, we need to perform a SCF loop
 so that the energy stays constant.
 
 In order to calculate the total energy, we now also need to
-incorporate the hartee potential
+incorporate the Hartee potential
 
 #+Label: Eq12
 \begin{equation}
@@ -714,7 +714,7 @@ while cnt < 8:
 #+end_src
 *** Figure
 #+begin_src python :results drawer :exports results :noweb yes
-path = "/home/chilkuri/Documents/codes/python/gscf/Fig-4.png"
+path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-4.png"
 
 plt.clf()
 fig = plt.figure()
@@ -743,5 +743,5 @@ plt.savefig(path)
 
 #+RESULTS:
 :results:
-[[/home/chilkuri/Documents/codes/python/gscf/Fig-4.png]]
+[[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-4.png]]
 :end:
