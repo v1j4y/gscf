@@ -8,6 +8,16 @@
 #+LaTeX_Header: \newcommand*\Laplace{\mathop{}\!\mathbin\bigtriangleup}
 :END:
 
+:SETUP:
+#+begin_src python :session p1 :results silent
+import numpy as np
+from scipy.integrate import odeint
+from scipy import integrate
+from scipy import interpolate
+from scipy.optimize import root_scalar
+import matplotlib.pyplot as plt
+#+end_src
+:END:
 
 * Introduction
 
@@ -36,6 +46,10 @@ In the present manuscript, we shall document numerical methods for the solution
 of various types of Hamiltonians and analyze their spectra and wavefunctions.
 
 * Hydrogen atom
+:PROPERTIES:
+:header-args:python: :async :session p1
+:END:
+
 
 We begin with the most simplest SLP which is the solution
 of the Hamiltonian for the hydrogen atom Eq:[[Eq2]]
@@ -91,7 +105,7 @@ With only $r$ being the dependent variable i.e. the first equation.
 Here we can do a further transformation of the dependent variable
 $u(r) = r R(r)$ which gives the SLP
 
-#+Label: Eq5
+#+Label: Eq6
 \begin{equation}
 \begin{align*}
 -\frac{\partial^2 u(r)}{\partial r^2}
@@ -100,3 +114,593 @@ q(r) &= \frac{l(l+1)}{r^2} + V(r)\\
 p(r) &= g(r) = 1
 \end{align*}
 \end{equation}
+
+These (Eq:[[Eq6]]) are the working equations.
+
+** Methodology
+
+First, we transfrom Eq:[[Eq6]] into a set of coupled linear
+ODEs
+
+#+Label: Eq7
+\begin{equation}
+\begin{align*}
+y &= \begin{pmatrix} u \\ u' \end{pmatrix}\\
+y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ \left( \frac{l(l+1)}{r^2} -\frac{1}{r} - E \right) u \end{pmatrix}\\
+\end{align*}
+\end{equation}
+
+The boundary conditions are at $r=0$ and $r=\infty$ with
+$u(r)=0$ and $u(\infty)=0$.
+
+**** Vector Field
+
+#+begin_src python :results silent
+def vectorfield(w, t, p):
+    """
+    Defines the differential equations for the coupled spring-mass system.
+
+    Arguments:
+    w :  vector of the state variables:
+              w = [x1,y1,x2,y2]
+    t :  time
+    p :  vector of the parameters:
+              p = [m1,m2,k1,k2,L1,L2,b1,b2]
+    """
+    x1, y1 = w
+    e1, l1 = p
+
+    # Create f = (x1',y1'):
+    f = [y1,
+         (l1*(l1+1)/t**2 - 2./t - 2.*e1)*x1
+         ]
+    return f
+#+end_src
+
+**** Solution
+#+begin_src python :results silent
+def solve_SLP(e1=-0.5, l1=0, t=None, numpoints=1600, stoptime=15.0):
+    # Parameter values
+
+    # Initial conditions
+    # x1 and x2 are the initial displacements; y1 and y2 are the initial velocities
+    x1 = 0
+    y1 =-1.0E-6
+
+    # ODE solver parameters
+    abserr = 1.0e-8
+    relerr = 1.0e-6
+
+    # Create the time samples for the output of the ODE solver.
+    # I use a large number of points, only because I want to make
+    # a plot of the solution that looks nice.
+    if t is None:
+        t = [stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)]
+
+    # Reverse the list to converge from the right
+    t_rev = t[::-1]
+
+    # Pack up the parameters and initial conditions:
+    p = [e1, l1]
+    w0 = [x1, y1]
+
+    # Call the ODE solver.
+    wsol = odeint(vectorfield, w0, t_rev, args=(p,),
+                  atol=abserr, rtol=relerr)
+
+    x1 = wsol[:,0]
+    # Reverse the result back
+    x1 = x1[::-1]
+
+    # Normalize
+    norm = integrate.simps(x1**2, x=t)
+    x1 = x1/np.sqrt(norm)
+
+    tck = interpolate.splrep(t,x1)
+
+    def nrf(x, tck):
+        return interpolate.splev(x, tck)
+    return(x1,nrf,tck)
+#+end_src
+
+*** Shooting method
+
+Here we start with $u(\infty)=0$ and integrate towards
+$r=0$. This is more stable for the convergence with
+respect to the Hydrogen atom.
+
+**** Code
+
+#+begin_src python :results silent
+def shoot(E, t, l=0):
+   u,nrf,tck= solve_SLP(e1=E, l1=l, t=t)
+   u = u/t**l
+
+   # Extrapolate u to the origin r=0.
+   return u[0] - t[0] * (u[1] - u[0])/(t[1] - t[0]), u, nrf, tck
+#+end_src
+
+**** Testing
+#+begin_src python :results silent
+rr = np.logspace(-6, 5, 500)
+numpoints=400
+stoptime=15.0
+rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
+EE = [-1.1]
+u0s = [
+    shoot(EE[0], 0, rr)[0] for E in EE
+]
+
+#+end_src
+**** Plot
+#+begin_src python :results drawer :exports results :noweb yes
+path = "/home/chilkuri/Documents/codes/python/gscf/Fig-tmp.png"
+
+plt.clf()
+fig, ax = plt.subplots()
+
+rr = np.logspace(-6, 5, 500)
+rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
+EE = [-1.1]
+u0s,u = shoot(EE[0], 0, rr)
+
+plt.plot(range(len(rr)),u)
+plt.grid()
+#ax.set_yscale('log')
+plt.xlabel("E")
+plt.ylabel("u(0)")
+
+plt.savefig(path)
+<<dressPath>>
+#+end_src
+
+#+RESULTS:
+:results:
+[[/home/chilkuri/Documents/codes/python/gscf/Fig-tmp.png]]
+:end:
+
+*** Plots
+**** Plotting stuff
+#+NAME: dressPath
+#+BEGIN_SRC python :session p1 :noweb
+
+# "path" variable must be set by block that
+# expands this org source code block
+"[["+path+"]]"
+#+END_SRC
+
+**** Main
+#+begin_src python :results drawer :exports results :noweb yes
+path = "/home/chilkuri/Documents/codes/python/gscf/Fig-1.png"
+
+plt.clf()
+fig, ax = plt.subplots()
+
+numpoints=400
+stoptime=15.0
+rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
+EE = np.linspace(-1.5, 0.1, 100)
+u0s = [
+    shoot(E, rr, l=0)[0] for E in EE
+]
+
+plt.plot(EE, u0s)
+plt.grid()
+plt.xlabel("E")
+plt.ylabel("u(0)")
+
+plt.savefig(path)
+<<dressPath>>
+#+end_src
+
+#+RESULTS:
+:results:
+[[/home/chilkuri/Documents/codes/python/gscf/Fig-1.png]]
+:end:
+
+*** Solution of the SLP
+
+Here we have to search for the value of $E$
+for which the BVP has the final conditions satisfied
+i.e. $u(r)=0$. This is done using the optimization
+routine from ~scipy~.
+
+**** Code
+#+begin_src python :results silent
+def get_energy_and_density(l,rr,E=None):
+    dE = 0.01 # scan resolution to look for sign changes
+    if E is None:
+        E = -1.0 # starting energy
+
+    def fn(e):
+        u0s = shoot(e, rr, l=l)[0]
+        return(u0s)
+    E_bound = root_scalar(fn, x0=E-dE, x1=E).root
+    _,u_bound,nrf,tck = shoot(E_bound, rr, l=l)
+    return(E_bound, u_bound, nrf, tck)
+#+end_src
+**** Testing
+#+begin_src python :results silent
+numpoints=400
+stoptime=15.0
+rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
+E_bound,_,_,_ = get_energy_and_density(0,rr)
+#+end_src
+**** Main
+#+begin_src python :results drawer :exports results :noweb yes
+path = "/home/chilkuri/Documents/codes/python/gscf/Fig-1.png"
+
+plt.clf()
+fig, ax = plt.subplots()
+
+numpoints=1600
+stoptime=20.0
+rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
+E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-0.40)
+
+x1n = [nrf(x,tck) for x in rr]
+plt.plot(rr, x1n)
+plt.grid()
+plt.xlabel("r")
+plt.ylabel("u(0)")
+
+plt.savefig(path)
+<<dressPath>>
+#+end_src
+
+#+RESULTS:
+:results:
+[[/home/chilkuri/Documents/codes/python/gscf/Fig-1.png]]
+:end:
+
+** Helium atom
+
+Here we need to include the Hartree potential $V_H$ which is the
+repulsion between the two electrons
+
+#+Label: Eq8
+\begin{equation}
+V_H(\mathbf{r}) = \int dr'^3 n(\mathbf{r}')\frac{1}{\mathbf{r}-\mathbf{r}'}
+\end{equation}
+
+Where the $n(\mathbf{r})$ is the density which is given as
+
+\[
+n(\mathbf{r}) = 2\sum_i^{N_{occ}} |\psi(\mathbf{r})|^2
+\]
+
+where we assume a close shell spin singlet slater determinant.
+
+*** Poisson equation
+
+In order to calculate the Hartree potential Eq:[[Eq8]], we shall
+transform it into an SLP which we can again solve using the
+above methodology the solution of the Hydrogen atom.
+
+#+Label: Eq9
+\begin{equation}
+\nabla^2 V_H(\mathbf{r}) = -4 \pi n(\mathbf{r})
+\end{equation}
+
+This can again be transformed using the variable substitution
+$u(r)=rR(r)$ to a 1D equation.
+
+#+Label: Eq10
+\begin{equation}
+\frac{\partial^2 U(r)}{\partial r} = -4\pi r n(r)
+\end{equation}
+
+The fact that $n(r)$ is simply $R(r)^2$ by definition and the
+fact that $u(r)$ is normalized we can drop off $4\pi$ to finally
+obtain
+
+#+Label: Eq11
+\begin{equation}
+U''(r) = -\frac{u(r)^2}{r}
+\end{equation}
+
+This is the SLP that we need to solve to obtain the
+hartree potential $V_H(r)$.
+
+*** Solution
+
+The BVP Eq:[[Eq11]] takes the following boundary conditions
+
+\begin{equation}
+\begin{align*}
+U(0) &= 0\\
+U(r_{max}) &= q_{max}
+\end{align*}
+\end{equation}
+
+where, $q_{max}$ is the total charge. We shall use these conditions
+in the shooting method to find the correct Hartree potential.
+
+\[
+q_{max} = \int_0^{max} \text{d}r\ u^2(r)
+\]
+
+**** Vector Field
+#+begin_src python :results silent
+def vectorfieldVH(w, t, p):
+    """
+    Defines the differential equations for the coupled spring-mass system.
+
+    Arguments:
+    w :  vector of the state variables:
+              w = [x1,y1,x2,y2]
+    t :  time
+    p :  vector of the parameters:
+              p = [m1,m2,k1,k2,L1,L2,b1,b2]
+    """
+    x1, y1 = w
+    nrf, tck = p
+
+    # Create f = (x1',y1'):
+    f = [y1,
+         -nrf(t,tck)*nrf(t,tck)/t
+         ]
+    return f
+#+end_src
+**** ODE Solution
+#+begin_src python :results silent
+def solve_SLP_VH(nrf, tck, t=None, numpoints=1600, stoptime=15.0, qmax=1):
+    # Parameter values
+
+    # Initial conditions
+    # x1 and x2 are the initial displacements; y1 and y2 are the initial velocities
+    x1 = qmax
+    y1 =-1.0E-6
+
+    # ODE solver parameters
+    abserr = 1.0e-8
+    relerr = 1.0e-6
+
+    # Create the time samples for the output of the ODE solver.
+    # I use a large number of points, only because I want to make
+    # a plot of the solution that looks nice.
+    if t is None:
+        t = [stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)]
+
+    # Reverse the list to converge from the right
+    t_rev = t[::-1]
+
+    # Pack up the parameters and initial conditions:
+    p = [nrf, tck]
+    w0 = [x1, y1]
+
+    # Call the ODE solver.
+    wsol = odeint(vectorfieldVH, w0, t_rev, args=(p,),
+                  atol=abserr, rtol=relerr)
+
+    x1 = wsol[:,0]
+    # Reverse the result back
+    x1 = x1[::-1]
+
+    # Normalize
+    norm = integrate.simps(x1**2, x=t)
+    x1 = x1/np.sqrt(norm)
+
+    tckur = interpolate.splrep(t,x1)
+
+    def urf(x, tck):
+        return interpolate.splev(x, tckur)
+    return(x1,urf,tckur)
+#+end_src
+**** Testing
+#+begin_src python :results silent
+numpoints=400
+stoptime=15.0
+rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
+__,urf,tckur = solve_SLP_VH(nrf, tck, t=rr)
+#+end_src
+**** Main
+#+begin_src python :results drawer :exports results :noweb yes
+path = "/home/chilkuri/Documents/codes/python/gscf/Fig-2.png"
+
+plt.clf()
+fig, ax = plt.subplots()
+
+numpoints=400
+stoptime=15.0
+rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
+x1,urf,tckur = solve_SLP_VH(nrf, tck, t=rr)
+
+x1n = [urf(x,tckur) for x in rr]
+plt.plot(rr, x1n)
+plt.grid()
+plt.xlabel("r")
+plt.ylabel("u(0)")
+
+plt.savefig(path)
+<<dressPath>>
+#+end_src
+
+#+RESULTS:
+:results:
+[[/home/chilkuri/Documents/codes/python/gscf/Fig-2.png]]
+:end:
+
+*** Self-consistent field cycle
+
+In order to find the solution, we need to perform a SCF loop
+so that the energy stays constant.
+
+In order to calculate the total energy, we now also need to
+incorporate the hartee potential
+
+#+Label: Eq12
+\begin{equation}
+E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
+\end{equation}
+
+**** Hydrogen functions with a potential
+
+***** Vector Field
+#+begin_src python :results silent
+def vectorfieldwithVH(w, t, p):
+    """
+    Defines the differential equations for the coupled spring-mass system.
+
+    Arguments:
+    w :  vector of the state variables:
+              w = [x1,y1,x2,y2]
+    t :  time
+    p :  vector of the parameters:
+              p = [m1,m2,k1,k2,L1,L2,b1,b2]
+    """
+    x1, y1 = w
+    e1, l1, urf, tckur = p
+
+    # Create f = (x1',y1'):
+    f = [y1,
+         (l1*(l1+1)/t**2 - 2./t - 2.*e1 + urf(t,tckur)/t)*x1
+         ]
+    return f
+#+end_src
+
+***** Solution
+#+begin_src python :results silent
+def solve_SLP_withVH(urf, tckur, e1=-0.5, l1=0, t=None, numpoints=1600, stoptime=15.0):
+    # Parameter values
+
+    # Initial conditions
+    # x1 and x2 are the initial displacements; y1 and y2 are the initial velocities
+    x1 = 0
+    y1 =-1.0E-6
+
+    # ODE solver parameters
+    abserr = 1.0e-8
+    relerr = 1.0e-6
+
+    # Create the time samples for the output of the ODE solver.
+    # I use a large number of points, only because I want to make
+    # a plot of the solution that looks nice.
+    if t is None:
+        t = [stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)]
+
+    # Reverse the list to converge from the right
+    t_rev = t[::-1]
+
+    # Pack up the parameters and initial conditions:
+    p = [e1, l1, urf, tckur]
+    w0 = [x1, y1]
+
+    # Call the ODE solver.
+    wsol = odeint(vectorfieldwithVH, w0, t_rev, args=(p,),
+                  atol=abserr, rtol=relerr)
+
+    x1 = wsol[:,0]
+    # Reverse the result back
+    x1 = x1[::-1]
+
+    # Normalize
+    norm = integrate.simps(x1**2, x=t)
+    x1 = x1/np.sqrt(norm)
+
+    tck = interpolate.splrep(t,x1)
+
+    def nrf(x, tck):
+        return interpolate.splev(x, tck)
+    return(x1,nrf,tck)
+#+end_src
+
+***** Shooting Code
+#+begin_src python :results silent
+def shoot_withVH(E, t, urf, tckur, l=0):
+   u,nrf,tck= solve_SLP_withVH(urf, tckur, e1=E, l1=l, t=t)
+   u = u/t**l
+
+   # Extrapolate u to the origin r=0.
+   return u[0] - t[0] * (u[1] - u[0])/(t[1] - t[0]), u, nrf, tck
+#+end_src
+
+***** Final solution
+#+begin_src python :results silent
+def get_energy_and_density_withVH(l,rr,urf,tckur,E=None):
+    dE = 0.01 # scan resolution to look for sign changes
+    if E is None:
+        E = -1.0 # starting energy
+
+    def fn(e):
+        u0s = shoot_withVH(e, rr, urf, tckur, l=l)[0]
+        return(u0s)
+    E_bound = root_scalar(fn, x0=E-dE, x1=E).root
+    _,u_bound,nrf,tck = shoot_withVH(E_bound, rr, urf, tckur, l=l)
+    return(E_bound, u_bound, nrf, tck)
+#+end_src
+
+**** Testing
+#+begin_src python :results silent
+numpoints=400
+stoptime=15.0
+rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
+_,_,nrf1,tck1 = get_energy_and_density_withVH(0, rr, urf, tckur, E=-0.5)
+#+end_src
+**** Main
+#+begin_src python :results drawer :exports results :noweb yes
+path = "/home/chilkuri/Documents/codes/python/gscf/Fig-3.png"
+
+plt.clf()
+fig, ax = plt.subplots()
+
+numpoints=400
+stoptime=15.0
+rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
+E_bound,x1,nrf1,tck1 = get_energy_and_density_withVH(0, rr, urf, tckur, E=-0.5)
+
+x1n = [nrf1(x,tckur) for x in rr]
+plt.plot(rr, x1)
+plt.grid()
+plt.xlabel("r")
+plt.ylabel("u(0)")
+
+plt.savefig(path)
+<<dressPath>>
+#+end_src
+
+#+RESULTS:
+:results:
+[[/home/chilkuri/Documents/codes/python/gscf/Fig-3.png]]
+:end:
+
+**** Calculate energy
+#+begin_src python :results silent
+def calcEnergy(ei,urf,tckur,nrf,tck,stoptime=15.0,numpoints=400):
+    E = 2*ei
+    t = [stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)]
+    h = t[1]-t[0]
+    VHl = [urf(x,tckur)/x for x in t]
+    Nr = [nrf(x,tck) for x in t]
+    eH = np.dot(VHl,Nr)*h
+    E += eH
+    return(E)
+#+end_src
+**** SCF cycle code
+#+begin_src python :results silent
+
+stoptime=15.0
+numpoints=400
+rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
+
+# Get initial density
+E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-0.40)
+
+# Get initial ur
+x1,urf,tckur = solve_SLP_VH(nrf, tck, t=rr)
+E0 = calcEnergy(E_bound, urf, tckur, nrf, tck)
+
+cnt = 0
+while cnt < 5:
+
+    # Get density
+    E_bound,x1,nrf,tck = get_energy_and_density_withVH(0, rr, urf, tckur, E=-0.5)
+    # Get ur
+    x1,urf,tckur = solve_SLP_VH(nrf, tck, t=rr)
+    E1 = calcEnergy(E_bound, urf, tckur, nrf, tck)
+    Ediff = abs(E0-E1)
+    print(f"Iter : {cnt} E = {E1} Diff = {Ediff}")
+    E0 = E1
+
+    cnt += 1
+#+end_src
