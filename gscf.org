@@ -353,7 +353,7 @@ plt.savefig(path)
 [[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-1.png]]
 :end:
 
-** Helium atom
+* Helium atom
 
 Here we need to include the Hartree potential $V_H$ which is the
 repulsion between the two electrons
@@ -371,7 +371,7 @@ n(\mathbf{r}) = 2\sum_i^{N_{occ}} |\psi(\mathbf{r})|^2
 
 where we assume a close shell spin singlet slater determinant.
 
-*** Poisson equation
+** Poisson equation
 
 In order to calculate the Hartree potential Eq:[[Eq8]], we shall
 transform it into an SLP which we can again solve using the
@@ -402,7 +402,7 @@ U''(r) = -\frac{u(r)^2}{r}
 This is the SLP that we need to solve to obtain the
 hartree potential $V_H(r)$.
 
-*** Solution
+** Solution
 
 The BVP Eq:[[Eq11]] takes the following boundary conditions
 
@@ -420,7 +420,7 @@ in the shooting method to find the correct Hartree potential.
 q_{max} = \int_0^{max} \text{d}r\ u^2(r)
 \]
 
-**** Vector Field
+*** Vector Field
 #+begin_src python :results silent
 def vectorfieldVH(w, t, p):
     """
@@ -442,7 +442,7 @@ def vectorfieldVH(w, t, p):
          ]
     return f
 #+end_src
-**** ODE Solution
+*** ODE Solution
 #+begin_src python :results silent
 def solve_SLP_VH(nrf, tck, t=None, numpoints=1600, stoptime=15.0, qmax=1):
     # Parameter values
@@ -487,14 +487,14 @@ def solve_SLP_VH(nrf, tck, t=None, numpoints=1600, stoptime=15.0, qmax=1):
         return interpolate.splev(x, tckur)
     return(x1,urf,tckur)
 #+end_src
-**** Testing
+*** Testing
 #+begin_src python :results silent
 numpoints=400
 stoptime=15.0
 rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
 __,urf,tckur = solve_SLP_VH(nrf, tck, t=rr)
 #+end_src
-**** Main
+*** Main
 #+begin_src python :results drawer :exports results :noweb yes
 path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-2.png"
 
@@ -521,7 +521,7 @@ plt.savefig(path)
 [[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-2.png]]
 :end:
 
-*** Self-consistent field cycle
+** Self-consistent field cycle
 
 In order to find the solution, we need to perform a SCF loop
 so that the energy stays constant.
@@ -533,7 +533,7 @@ incorporate the Hartee potential
 \begin{equation}
 E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
 \end{equation}
-**** Hydrogen functions with a potential
+*** Hydrogen functions with a potential
 
 ***** Vector Field
 #+begin_src python :results silent
@@ -629,14 +629,14 @@ def get_energy_and_density_withVH(l,rr,urf,tckur,E=None):
     return(E_bound, u_bound, nrf, tck)
 #+end_src
 
-**** Testing
+*** Testing
 #+begin_src python :results silent
 numpoints=400
 stoptime=15.0
 rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
 _,_,nrf1,tck1 = get_energy_and_density_withVH(0, rr, urf, tckur, E=-0.5)
 #+end_src
-**** Main
+*** Main
 #+begin_src python :results drawer :exports results :noweb yes
 path = "/home/chilkuri/Documents/codes/python/gscf/Fig-3.png"
 
@@ -663,7 +663,7 @@ plt.savefig(path)
 [[/home/chilkuri/Documents/codes/python/gscf/Fig-3.png]]
 :end:
 
-**** Calculate energy
+*** Calculate energy
 #+begin_src python :results silent
 def calcEnergy(ei,urf,tckur,nrf,tck,t=None,stoptime=60.0,numpoints=3200):
     E = 2*ei
@@ -676,7 +676,7 @@ def calcEnergy(ei,urf,tckur,nrf,tck,t=None,stoptime=60.0,numpoints=3200):
     E = E - eH
     return(E)
 #+end_src
-**** SCF cycle code
+*** SCF cycle code
 #+begin_src python :results silent
 
 stoptime=60.0
@@ -712,7 +712,7 @@ while cnt < 8:
 
     cnt += 1
 #+end_src
-*** Figure
+** Figure
 #+begin_src python :results drawer :exports results :noweb yes
 path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-4.png"
 
