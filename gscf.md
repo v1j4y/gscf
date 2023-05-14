@@ -647,4 +647,4 @@ E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
 ## Figure
 
 
-![img](Figs/Fig-3.png)
+![img](Figs/Fig-4.png)
