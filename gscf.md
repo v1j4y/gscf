@@ -259,7 +259,7 @@ respect to the Hydrogen atom.
 
 2.  Main
 
-    ![img](/home/chilkuri/Documents/codes/python/gscf/Fig-1.png)
+    ![img](Figs/Fig-1.png)
 
 
 <a id="org7b20f0e"></a>
@@ -294,7 +294,7 @@ routine from `scipy`.
 
 3.  Main
 
-    ![img](/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-1.png)
+    ![img](Figs/Fig-2.png)
 
 
 <a id="org0525f4d"></a>
@@ -646,3 +646,5 @@ E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
 
 ## Figure
 
+
+![img](Figs/Fig-3.png)

@@ -12,4 +12,4 @@ Hamiltonian for the following atoms
 
 Focus is on simplicity and readability.
 
-To see the source code and read the documentation head [here](gscf.org)
+To see the source code and read the documentation head [here](gscf.md)
