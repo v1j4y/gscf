@@ -56,7 +56,7 @@ of the Hamiltonian for the hydrogen atom Eq:[[Eq2]]
 
 #+Label: Eq2
 \[
-\hat{H}\psi(\mathbf{x}) = \left [ -\Laplace + V \right ]\psi(\mathbf{x})
+\hat{H}\psi(\mathbf{x}) = \left [ -\bigtriangleup + V \right ]\psi(\mathbf{x})
 \]
 
 This is the SLP(Eq:[[Eq1]]) with $p(t)=g(t)=1$, and $q(t)=V$, the potential acting

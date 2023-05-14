@@ -1,26 +1,26 @@
 
 # Table of Contents
 
-1.  [Introduction](#orgf98a791)
-2.  [Hydrogen atom](#org562d740)
-    1.  [Methodology](#org434f8cb)
-        1.  [Shooting method](#org38aea0a)
-        2.  [Plots](#org8e90f31)
-        3.  [Solution of the SLP](#org7b20f0e)
-3.  [Helium atom](#org0525f4d)
-    1.  [Poisson equation](#org489c15c)
-    2.  [Solution](#org98fc57f)
-        1.  [Vector Field](#orga38c6dd)
-        2.  [ODE Solution](#org52d8b5b)
-        3.  [Testing](#org53b4ba4)
-        4.  [Main](#org00b046c)
-    3.  [Self-consistent field cycle](#org1413d3f)
-        1.  [Hydrogen functions with a potential](#org2938649)
-        2.  [Testing](#orgf6d2354)
-        3.  [Main](#org6a7b497)
-        4.  [Calculate energy](#org2aa7223)
-        5.  [SCF cycle code](#org7f6fdb2)
-    4.  [Figure](#org4976447)
+1.  [Introduction](#org5e49891)
+2.  [Hydrogen atom](#orgb0ea578)
+    1.  [Methodology](#org8ef8eaf)
+        1.  [Shooting method](#org5f78f6c)
+        2.  [Plots](#org5a58b27)
+        3.  [Solution of the SLP](#org08553eb)
+3.  [Helium atom](#orgdc2b070)
+    1.  [Poisson equation](#org58f0f62)
+    2.  [Solution](#org90919c4)
+        1.  [Vector Field](#org662e6c9)
+        2.  [ODE Solution](#org6c81570)
+        3.  [Testing](#org258376d)
+        4.  [Main](#org339ab38)
+    3.  [Self-consistent field cycle](#org96d80f5)
+        1.  [Hydrogen functions with a potential](#org7ec420a)
+        2.  [Testing](#org5e76bd7)
+        3.  [Main](#orgd0ae4a2)
+        4.  [Calculate energy](#org50595b8)
+        5.  [SCF cycle code](#org11091ea)
+    4.  [Figure](#org249efc2)
 
 
     import numpy as np
@@ -31,7 +31,7 @@
     import matplotlib.pyplot as plt
 
 
-<a id="orgf98a791"></a>
+<a id="org5e49891"></a>
 
 # Introduction
 
@@ -59,23 +59,23 @@ In the present manuscript, we shall document numerical methods for the solution
 of various types of Hamiltonians and analyze their spectra and wavefunctions.
 
 
-<a id="org562d740"></a>
+<a id="orgb0ea578"></a>
 
 # Hydrogen atom
 
 We begin with the most simplest SLP which is the solution
-of the Hamiltonian for the hydrogen atom Eq:[8](#org6d2ff4d)
+of the Hamiltonian for the hydrogen atom Eq:[8](#orgbf9b2a8)
 
 $$
-\hat{H}\psi(\mathbf{x}) = \left [ -\Laplace + V \right ]\psi(\mathbf{x})
+\hat{H}\psi(\mathbf{x}) = \left [ -\bigtriangleup + V \right ]\psi(\mathbf{x})
 $$
 
-This is the SLP(Eq:[4](#orgb591c3c)) with $p(t)=g(t)=1$, and $q(t)=V$, the potential acting
-on the particle. The Eq:[8](#org6d2ff4d) is in cartesian coordinates $\mathbf{x}$ and
+This is the SLP(Eq:[4](#org33da799)) with $p(t)=g(t)=1$, and $q(t)=V$, the potential acting
+on the particle. The Eq:[8](#orgbf9b2a8) is in cartesian coordinates $\mathbf{x}$ and
 can be transformed to spherical coordinates via a coordinate transformation.
 
 \begin{equation}
-\label{org2b5f043}
+\label{org76d9824}
 \begin{align*}
 x_1 &= r\sin{\theta}\cos{\phi},\\
 x_2 &= r\sin{\theta}\sin{\phi},\\
@@ -86,7 +86,7 @@ x_3 &= r\cos{\theta}
 In spherical coordinates, the operator $\hat{H}$ is transformed to
 
 \begin{equation}
-\label{orgd6d611b}
+\label{orgead7ac7}
 \begin{align*}
 \hat{H} &= -\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial}{\partial r} \right) \\
 &  -\frac{1}{r^2}\frac{1}{\sin{\theta}}\frac{\partial}{\partial\theta} \left(\sin{\theta}\frac{\partial}{\partial\theta} \right)\\
@@ -98,7 +98,7 @@ We can then separate the wavefunction to three independent variables
 $\psi(\mathbf{x})=R(r)\Theta(\theta)\Phi(\phi)$ to obtain three separate SLPs
 
 \begin{equation}
-\label{orgeb075cd}
+\label{org1380809}
 \begin{align*}
 \left (
 -\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial}{\partial r} \right)
@@ -117,7 +117,7 @@ Here we can do a further transformation of the dependent variable
 $u(r) = r R(r)$ which gives the SLP
 
 \begin{equation}
-\label{orgc5a21fc}
+\label{org7c9626a}
 \begin{align*}
 -\frac{\partial^2 u(r)}{\partial r^2}
 + q(r) u(r) &= \lambda u(r) \\
@@ -126,18 +126,18 @@ p(r) &= g(r) = 1
 \end{align*}
 \end{equation}
 
-These (Eq:[4](#orgc5a21fc)) are the working equations.
+These (Eq:[4](#org7c9626a)) are the working equations.
 
 
-<a id="org434f8cb"></a>
+<a id="org8ef8eaf"></a>
 
 ## Methodology
 
-First, we transfrom Eq:[4](#orgc5a21fc) into a set of coupled linear
+First, we transfrom Eq:[4](#org7c9626a) into a set of coupled linear
 ODEs
 
 \begin{equation}
-\label{orgbd68754}
+\label{org003bbb5}
 \begin{align*}
 y &= \begin{pmatrix} u \\ u' \end{pmatrix}\\
 y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ \left( \frac{l(l+1)}{r^2} -\frac{1}{r} - E \right) u \end{pmatrix}\\
@@ -215,7 +215,7 @@ $u(r)=0$ and $u(\infty)=0$.
             return(x1,nrf,tck)
 
 
-<a id="org38aea0a"></a>
+<a id="org5f78f6c"></a>
 
 ### Shooting method
 
@@ -246,7 +246,7 @@ respect to the Hydrogen atom.
 3.  Plot
 
 
-<a id="org8e90f31"></a>
+<a id="org5a58b27"></a>
 
 ### Plots
 
@@ -259,10 +259,10 @@ respect to the Hydrogen atom.
 
 2.  Main
 
-    ![img](Figs/Fig-1.png)
+    ![img](/home/chilkuri/Documents/codes/python/gscf/Fig-1.png)
 
 
-<a id="org7b20f0e"></a>
+<a id="org08553eb"></a>
 
 ### Solution of the SLP
 
@@ -294,10 +294,10 @@ routine from `scipy`.
 
 3.  Main
 
-    ![img](Figs/Fig-2.png)
+    ![img](/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-1.png)
 
 
-<a id="org0525f4d"></a>
+<a id="orgdc2b070"></a>
 
 # Helium atom
 
@@ -305,7 +305,7 @@ Here we need to include the Hartree potential $V_H$ which is the
 repulsion between the two electrons
 
 \begin{equation}
-\label{org9a43e7b}
+\label{orga7b30e8}
 V_H(\mathbf{r}) = \int dr'^3 n(\mathbf{r}')\frac{1}{\mathbf{r}-\mathbf{r}'}
 \end{equation}
 
@@ -318,16 +318,16 @@ $$
 where we assume a close shell spin singlet slater determinant.
 
 
-<a id="org489c15c"></a>
+<a id="org58f0f62"></a>
 
 ## Poisson equation
 
-In order to calculate the Hartree potential Eq:[6](#org9a43e7b), we shall
+In order to calculate the Hartree potential Eq:[6](#orga7b30e8), we shall
 transform it into an SLP which we can again solve using the
 above methodology the solution of the Hydrogen atom.
 
 \begin{equation}
-\label{org609bb1c}
+\label{org2daffa9}
 \nabla^2 V_H(\mathbf{r}) = -4 \pi n(\mathbf{r})
 \end{equation}
 
@@ -335,7 +335,7 @@ This can again be transformed using the variable substitution
 $u(r)=rR(r)$ to a 1D equation.
 
 \begin{equation}
-\label{orgccf0374}
+\label{org8f18c00}
 \frac{\partial^2 U(r)}{\partial r} = -4\pi r n(r)
 \end{equation}
 
@@ -344,7 +344,7 @@ fact that $u(r)$ is normalized we can drop off $4\pi$ to finally
 obtain
 
 \begin{equation}
-\label{org48fa30c}
+\label{org4b41386}
 U''(r) = -\frac{u(r)^2}{r}
 \end{equation}
 
@@ -352,11 +352,11 @@ This is the SLP that we need to solve to obtain the
 hartree potential $V_H(r)$.
 
 
-<a id="org98fc57f"></a>
+<a id="org90919c4"></a>
 
 ## Solution
 
-The BVP Eq:[9](#org48fa30c) takes the following boundary conditions
+The BVP Eq:[9](#org4b41386) takes the following boundary conditions
 
 \begin{equation}
 \begin{align*}
@@ -373,7 +373,7 @@ q_{max} = \int_0^{max} \text{d}r\ u^2(r)
 $$
 
 
-<a id="orga38c6dd"></a>
+<a id="org662e6c9"></a>
 
 ### Vector Field
 
@@ -398,7 +398,7 @@ $$
         return f
 
 
-<a id="org52d8b5b"></a>
+<a id="org6c81570"></a>
 
 ### ODE Solution
 
@@ -446,7 +446,7 @@ $$
         return(x1,urf,tckur)
 
 
-<a id="org53b4ba4"></a>
+<a id="org258376d"></a>
 
 ### Testing
 
@@ -456,12 +456,12 @@ $$
     __,urf,tckur = solve_SLP_VH(nrf, tck, t=rr)
 
 
-<a id="org00b046c"></a>
+<a id="org339ab38"></a>
 
 ### Main
 
 
-<a id="org1413d3f"></a>
+<a id="org96d80f5"></a>
 
 ## Self-consistent field cycle
 
@@ -472,12 +472,12 @@ In order to calculate the total energy, we now also need to
 incorporate the Hartee potential
 
 \begin{equation}
-\label{orgb6de203}
+\label{orgb245f67}
 E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
 \end{equation}
 
 
-<a id="org2938649"></a>
+<a id="org7ec420a"></a>
 
 ### Hydrogen functions with a potential
 
@@ -572,7 +572,7 @@ E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
             return(E_bound, u_bound, nrf, tck)
 
 
-<a id="orgf6d2354"></a>
+<a id="org5e76bd7"></a>
 
 ### Testing
 
@@ -582,12 +582,12 @@ E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
     _,_,nrf1,tck1 = get_energy_and_density_withVH(0, rr, urf, tckur, E=-0.5)
 
 
-<a id="org6a7b497"></a>
+<a id="orgd0ae4a2"></a>
 
 ### Main
 
 
-<a id="org2aa7223"></a>
+<a id="org50595b8"></a>
 
 ### Calculate energy
 
@@ -603,7 +603,7 @@ E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
         return(E)
 
 
-<a id="org7f6fdb2"></a>
+<a id="org11091ea"></a>
 
 ### SCF cycle code
 
@@ -642,9 +642,7 @@ E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
         cnt += 1
 
 
-<a id="org4976447"></a>
+<a id="org249efc2"></a>
 
 ## Figure
 
-
-![img](Figs/Fig-4.png)
