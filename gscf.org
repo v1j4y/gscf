@@ -56,10 +56,10 @@ of the Hamiltonian for the hydrogen atom Eq:[[Eq2]]
 
 #+Label: Eq2
 \[
-\hat{H}\psi(\mathbf{x}) = \left [ -\bigtriangleup + V \right ]\psi(\mathbf{x})
+\hat{H}\psi(\mathbf{x}) = \left [ -\frac{1}{2}\bigtriangleup + V \right ]\psi(\mathbf{x})
 \]
 
-This is the SLP(Eq:[[Eq1]]) with $p(t)=g(t)=1$, and $q(t)=V$, the potential acting
+This is the SLP(Eq:[[Eq1]]) with $p(t)=\frac{1}{2}$, and $g(t)=1$, and $q(t)=V$, the potential acting
 on the particle. The Eq:[[Eq2]] is in cartesian coordinates $\mathbf{x}$ and
 can be transformed to spherical coordinates via a coordinate transformation.
 
@@ -77,7 +77,7 @@ In spherical coordinates, the operator $\hat{H}$ is transformed to
 #+Label: Eq4
 \begin{equation}
 \begin{align*}
-\hat{H} &= -\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial}{\partial r} \right) \\
+\hat{H} &= -\frac{1}{2}\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial}{\partial r} \right) \\
 &  -\frac{1}{r^2}\frac{1}{\sin{\theta}}\frac{\partial}{\partial\theta} \left(\sin{\theta}\frac{\partial}{\partial\theta} \right)\\
 &  -\frac{1}{r^2}\frac{1}{\sin{\theta}^2}\frac{\partial^2}{\partial\phi^2} + V
 \end{align*}
@@ -90,7 +90,7 @@ $\psi(\mathbf{x})=R(r)\Theta(\theta)\Phi(\phi)$ to obtain three separate SLPs
 \begin{equation}
 \begin{align*}
 \left (
--\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial}{\partial r} \right)
+-\frac{1}{2}\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial}{\partial r} \right)
 + \frac{l(l+1)}{r^2} + V(r)
  \right)R(r) &= \lambda R(r)\\
 \frac{1}{\sin{\theta}}\left (
@@ -108,7 +108,7 @@ $u(r) = r R(r)$ which gives the SLP
 #+Label: Eq6
 \begin{equation}
 \begin{align*}
--\frac{\partial^2 u(r)}{\partial r^2}
+-\frac{1}{2}\frac{\partial^2 u(r)}{\partial r^2}
 + q(r) u(r) &= \lambda u(r) \\
 q(r) &= \frac{l(l+1)}{r^2} + V(r)\\
 p(r) &= g(r) = 1
@@ -126,7 +126,7 @@ ODEs
 \begin{equation}
 \begin{align*}
 y &= \begin{pmatrix} u \\ u' \end{pmatrix}\\
-y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ \left( \frac{l(l+1)}{r^2} -\frac{\mathcal{Z}}{r} - E \right) u \end{pmatrix}\\
+y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ 2\left( \frac{l(l+1)}{r^2} -\frac{\mathcal{Z}}{r} - E \right) u \end{pmatrix}\\
 \end{align*}
 \end{equation}
 
@@ -134,7 +134,6 @@ The boundary conditions are at $r=0$ and $r=\infty$ with
 $u(r)=0$ and $u(\infty)=0$.
 
 **** Vector Field
-
 #+begin_src python :results silent
 def vectorfield(w, t, p):
     """
@@ -148,20 +147,18 @@ def vectorfield(w, t, p):
               p = [m1,m2,k1,k2,L1,L2,b1,b2]
     """
     x1, y1 = w
-    e1, l1, urf, tckur = p
+    e1, l1, urf, tckur, z = p
 
     # Create f = (x1',y1'):
     f = [y1,
-         (l1*(l1+1)/(t/2)**2 - 1./(t/2) - e1 + urf((t/2),tckur)/(t/2))*x1
+         2*(l1*(l1+1)/(t)**2 - z/(t) - e1 + urf(t,tckur)/t)*x1
          ]
 
     return f
 #+end_src
-
 **** Solution
 #+begin_src python :results silent
-def solve_SLP(fn=None, tckfn=None, e1=-0.5, l1=0, t=None, numpoints=1600, stoptime=15.0, xlim=0, ylim=-1.0E-6, vectorfield=None, isWF=True):
-
+def solve_SLP(fn=None, tckfn=None, e1=-0.5, l1=0, z=1., t=None, numpoints=1600, stoptime=15.0, xlim=0, ylim=-1.0E-6, vectorfield=None, isWF=True):
 
     if fn is None:
         def fn(x,tckfn):
@@ -191,7 +188,7 @@ def solve_SLP(fn=None, tckfn=None, e1=-0.5, l1=0, t=None, numpoints=1600, stopti
     t_rev = t[::-1]
 
     # Pack up the parameters and initial conditions:
-    p = [e1, l1, fn, tckfn]
+    p = [e1, l1, fn, tckfn, z]
     w0 = [x1, y1]
 
     # Call the ODE solver.
@@ -222,13 +219,12 @@ $r=0$. This is more stable for the convergence with
 respect to the Hydrogen atom.
 
 **** Code
-
 #+begin_src python :results silent
-def shoot(E, t, l=0, fn=None, tckfn=None, xlim=0, ylim=-1.E-6, vectorfield=None, isWF=True):
+def shoot(E, t, l=0, z=1., fn=None, tckfn=None, xlim=0, ylim=-1.E-6, vectorfield=None, isWF=True):
    if vectorfield is None:
       print("[shoot] Error: Have to supply a vectorfield")
       return(0,0,0,0)
-   u,fnout,tckfnout= solve_SLP(fn=fn, tckfn=None, e1=E, l1=l, t=t, xlim=xlim, ylim=ylim, vectorfield=vectorfield, isWF=isWF)
+   u,fnout,tckfnout= solve_SLP(fn=fn, tckfn=None, e1=E, l1=l, z=z, t=t, xlim=xlim, ylim=ylim, vectorfield=vectorfield, isWF=isWF)
    u = u/t**l
 
    # Extrapolate u to the origin r=0.
@@ -243,7 +239,7 @@ stoptime=15.0
 rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
 EE = [-1.1]
 u0s = [
-    shoot(EE[0], rr, l=0)[0] for E in EE
+    shoot(EE[0], rr, l=0, vectorfield=vectorfield)[0] for E in EE
 ]
 
 #+end_src
@@ -254,16 +250,15 @@ path = "/home/chilkuri/Documents/codes/python/gscf/Fig-tmp.png"
 plt.clf()
 fig, ax = plt.subplots()
 
-rr = np.logspace(-6, 5, 500)
 rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
-EE = [-1.1]
-u0s,u,_,_ = shoot(EE[0], rr, l=0)
+EE = [-0.5]
+u0s,u,_,_ = shoot(EE[0], rr, l=0, vectorfield=vectorfield, isWF=True)
 
-plt.plot(range(len(rr)),u)
+plt.plot(rr,u)
 plt.grid()
 #ax.set_yscale('log')
-plt.xlabel("E")
-plt.ylabel("u(0)")
+plt.xlabel("r")
+plt.ylabel("u(r)")
 
 plt.savefig(path)
 <<dressPath>>
@@ -291,10 +286,10 @@ path = "/home/chilkuri/Documents/codes/python/gscf/Fig-1.png"
 plt.clf()
 fig, ax = plt.subplots()
 
-numpoints=400
-stoptime=15.0
+numpoints=3200
+stoptime=60.0
 rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
-EE = np.linspace(-1.5, 0.1, 100)
+EE = np.linspace(-1.0, 0.1, 100)
 u0s = [
     shoot(E, rr, l=0, vectorfield=vectorfield)[0] for E in EE
 ]
@@ -322,7 +317,7 @@ routine from ~scipy~.
 
 **** Code
 #+begin_src python :results silent
-def get_energy_and_density(l,rr,E=None, vectorfield=None, urf=None, tckur=None, xlim=0., ylim=-1.0E-6, isWF=True):
+def get_energy_and_density(l,rr,z=1.,E=None, vectorfield=None, urf=None, tckur=None, xlim=0., ylim=-1.0E-6, isWF=True):
     dE = 0.01 # scan resolution to look for sign changes
     if E is None:
         E = -1.0 # starting energy
@@ -336,18 +331,18 @@ def get_energy_and_density(l,rr,E=None, vectorfield=None, urf=None, tckur=None, 
             return(0)
 
     def fn(e):
-        u0s = shoot(e, rr, l=l, fn=urf, tckfn=tckur, vectorfield=vectorfield, xlim=xlim, ylim=ylim, isWF=isWF)[0]
+        u0s = shoot(e, rr, l=l, z=z, fn=urf, tckfn=tckur, vectorfield=vectorfield, xlim=xlim, ylim=ylim, isWF=isWF)[0]
         return(u0s)
     E_bound = root_scalar(fn, x0=E-dE, x1=E).root
-    _,u_bound,nrf,tck = shoot(E_bound, rr, l=l, fn=urf, tckfn=tckur, vectorfield=vectorfield, xlim=xlim, ylim=ylim, isWF=isWF)
+    _,u_bound,nrf,tck = shoot(E_bound, rr, l=l, z=z, fn=urf, tckfn=tckur, vectorfield=vectorfield, xlim=xlim, ylim=ylim, isWF=isWF)
     return(E_bound, u_bound, nrf, tck)
 #+end_src
 **** Testing
 #+begin_src python :results silent
-numpoints=400
-stoptime=15.0
+numpoints=3200
+stoptime=60.0
 rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
-E_bound,_,_,_ = get_energy_and_density(0,rr)
+E_bound,_,_,_ = get_energy_and_density(0,rr,vectorfield=vectorfield)
 #+end_src
 **** Main
 #+begin_src python :results drawer :exports results :noweb yes
@@ -359,7 +354,7 @@ fig, ax = plt.subplots()
 numpoints=3200
 stoptime=60.0
 rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
-E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-1.50,vectorfield=vectorfield)
+E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-1.00,vectorfield=vectorfield)
 #E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-0.15,vectorfield=vectorfield)
 #E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-0.05,vectorfield=vectorfield)
 
@@ -397,7 +392,19 @@ Where the $n(\mathbf{r})$ is the density which is given as
 n(\mathbf{r}) = 2\sum_i^{N_{occ}} |\psi(\mathbf{r})|^2
 \]
 
-where we assume a close shell spin singlet slater determinant.
+where we assume a closed shell spin singlet slater determinant.
+In order to get the radial part of the density, we can use the
+radial part of the wavefunction $\psi(\mathbf{r})$ which is $R(\mathbf{r})$.
+
+\[
+\begin{equation}
+\begin{align*}
+n(r) &= 2\sum_i^{N_{occ}} |R(r)|^2 \\
+n(r) &= 2\sum_i^{N_{occ}} \left |\frac{u(r)}{r}\right|^2 \\
+\end{align*}
+\end{equation}
+\]
+
 
 ** Poisson equation
 
@@ -462,7 +469,7 @@ def vectorfieldVH(w, t, p):
               p = [m1,m2,k1,k2,L1,L2,b1,b2]
     """
     x1, y1 = w
-    _, _, nrf, tck = p
+    _, _, nrf, tck, z = p
 
     # Create f = (x1',y1'):
     f = [y1,
@@ -499,7 +506,7 @@ x1n = [urf(x,tck)  for x in rr]
 plt.plot(rr, x1n)
 plt.grid()
 plt.xlabel("r")
-plt.ylabel("u(0)")
+plt.ylabel("U(r)")
 
 plt.savefig(path)
 <<dressPath>>
@@ -525,7 +532,6 @@ E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
 
 
 *** Vector Field
-
 #+begin_src python :results silent
 def vectorfieldHe(w, t, p):
     """
@@ -539,11 +545,11 @@ def vectorfieldHe(w, t, p):
               p = [m1,m2,k1,k2,L1,L2,b1,b2]
     """
     x1, y1 = w
-    e1, l1, urf, tckur = p
+    e1, l1, urf, tckur, z = p
 
     # Create f = (x1',y1'):
     f = [y1,
-         (l1*(l1+1)/(t/np.sqrt(2.))**2 - 2./(t/np.sqrt(2)) - e1 + urf((t/np.sqrt(2.)),tckur)/(t/np.sqrt(2.)))*x1
+         2*(l1*(l1+1)/(t)**2 - z/t - e1 + urf(t,tckur)/t)*x1
          ]
 
     return f
@@ -570,8 +576,7 @@ numpoints=3200
 rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
 
 # Get initial density
-E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-2.10,vectorfield=vectorfieldHe)
-print(E_bound, E0)
+E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-1.50,vectorfield=vectorfield)
 
 # Get initial ur
 qmax = 1.
@@ -579,6 +584,7 @@ xlim = qmax
 ylim = 0.
 x1,urf,tckur = solve_SLP(fn=nrf, tckfn=tck, t=rr, xlim=xlim, ylim=ylim, vectorfield=vectorfieldVH, isWF=False)
 E0 = calcEnergy(E_bound, urf, tckur, nrf, tck)
+print(E_bound, E0)
 
 E_conv = []
 dE_conv = []
@@ -589,7 +595,7 @@ Ediff = 10.
 while cnt < 9 and abs(Ediff) > 1.E-4:
 
     # Get density
-    E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-2.10,vectorfield=vectorfieldHe, urf=urf, tckur=tckur)
+    E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-0.50,vectorfield=vectorfield, urf=urf, tckur=tckur)
     # Get ur
     x1,urf,tckur = solve_SLP(fn=nrf, tckfn=tck, t=rr, xlim=xlim, ylim=ylim, vectorfield=vectorfieldVH, isWF=False)
     E1 = calcEnergy(E_bound, urf, tckur, nrf, tck,t=rr)
@@ -617,7 +623,7 @@ rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpo
 #E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-0.05,vectorfield=vectorfield)
 
 #E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-2.10,vectorfield=vectorfieldHe)
-E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-2.10,vectorfield=vectorfieldHe, urf=urf, tckur=tckur)
+E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-2.10,vectorfield=vectorfieldHe, urf=urf, tckur=tckur)
 print(E_bound)
 
 x1n = [nrf(x,tck) for x in rr]
@@ -658,8 +664,8 @@ for (i,ax) in enumerate(axs):
 
 axs[0].axhline(y = -2.861, color = 'b', linestyle = '--')
 axs[1].axhline(y = 0., color = 'r', linestyle = '--')
-axs[0].set(ylabel="e (u.a.)")
-axs[1].set(ylabel="de (u.a.)")
+axs[0].set(ylabel="E(He) (u.a.)")
+axs[1].set(ylabel="$\Delta E (u.a.)$")
 
 plt.savefig(path)
 <<dressPath>>
