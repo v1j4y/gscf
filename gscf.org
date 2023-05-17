@@ -147,7 +147,7 @@ def vectorfield(w, t, p):
               p = [m1,m2,k1,k2,L1,L2,b1,b2]
     """
     x1, y1 = w
-    e1, l1, urf, tckur, z = p
+    e1, l1, urf, tckur, _, _, _, _, z = p
 
     # Create f = (x1',y1'):
     f = [y1,
@@ -158,10 +158,18 @@ def vectorfield(w, t, p):
 #+end_src
 **** Solution
 #+begin_src python :results silent
-def solve_SLP(fn=None, tckfn=None, e1=-0.5, l1=0, z=1., t=None, numpoints=1600, stoptime=15.0, xlim=0, ylim=-1.0E-6, vectorfield=None, isWF=True):
+def solve_SLP(fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None, e1=-0.5, l1=0, z=1., t=None, numpoints=1600, stoptime=15.0, xlim=0, ylim=-1.0E-6, vectorfield=None, isWF=True):
 
     if fn is None:
         def fn(x,tckfn):
+            return(0.)
+
+    if fnx is None:
+        def fnx(x,tckfnx):
+            return(0.)
+
+    if fnc is None:
+        def fnc(x,tckfnc):
             return(0.)
 
     if vectorfield is None:
@@ -188,7 +196,7 @@ def solve_SLP(fn=None, tckfn=None, e1=-0.5, l1=0, z=1., t=None, numpoints=1600, 
     t_rev = t[::-1]
 
     # Pack up the parameters and initial conditions:
-    p = [e1, l1, fn, tckfn, z]
+    p = [e1, l1, fn, tckfn, fnx, tckfnx, fnc, tckfnc, z]
     w0 = [x1, y1]
 
     # Call the ODE solver.
@@ -220,11 +228,11 @@ respect to the Hydrogen atom.
 
 **** Code
 #+begin_src python :results silent
-def shoot(E, t, l=0, z=1., fn=None, tckfn=None, xlim=0, ylim=-1.E-6, vectorfield=None, isWF=True):
+def shoot(E, t, l=0, z=1., fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None, xlim=0, ylim=-1.E-6, vectorfield=None, isWF=True):
    if vectorfield is None:
       print("[shoot] Error: Have to supply a vectorfield")
       return(0,0,0,0)
-   u,fnout,tckfnout= solve_SLP(fn=fn, tckfn=None, e1=E, l1=l, z=z, t=t, xlim=xlim, ylim=ylim, vectorfield=vectorfield, isWF=isWF)
+   u,fnout,tckfnout= solve_SLP(fn=fn, tckfn=None, fnx=fnx, tckfnx=tckfnx, fnc=fnc, tckfnc=tckfnc, e1=E, l1=l, z=z, t=t, xlim=xlim, ylim=ylim, vectorfield=vectorfield, isWF=isWF)
    u = u/t**l
 
    # Extrapolate u to the origin r=0.
@@ -317,8 +325,8 @@ routine from ~scipy~.
 
 **** Code
 #+begin_src python :results silent
-def get_energy_and_density(l,rr,z=1.,E=None, vectorfield=None, urf=None, tckur=None, xlim=0., ylim=-1.0E-6, isWF=True):
-    dE = 0.01 # scan resolution to look for sign changes
+def get_energy_and_density(l,rr,z=1.,E=None, vectorfield=None, urf=None, tckur=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None, xlim=0., ylim=-1.0E-6, isWF=True):
+    dE = 0.51 # scan resolution to look for sign changes
     if E is None:
         E = -1.0 # starting energy
 
@@ -331,10 +339,10 @@ def get_energy_and_density(l,rr,z=1.,E=None, vectorfield=None, urf=None, tckur=N
             return(0)
 
     def fn(e):
-        u0s = shoot(e, rr, l=l, z=z, fn=urf, tckfn=tckur, vectorfield=vectorfield, xlim=xlim, ylim=ylim, isWF=isWF)[0]
+        u0s = shoot(e, rr, l=l, z=z, fn=urf, tckfn=tckur, fnx=fnx, tckfnx=tckfnx, fnc=fnc, tckfnc=tckfnc, vectorfield=vectorfield, xlim=xlim, ylim=ylim, isWF=isWF)[0]
         return(u0s)
-    E_bound = root_scalar(fn, x0=E-dE, x1=E).root
-    _,u_bound,nrf,tck = shoot(E_bound, rr, l=l, z=z, fn=urf, tckfn=tckur, vectorfield=vectorfield, xlim=xlim, ylim=ylim, isWF=isWF)
+    E_bound = root_scalar(fn, x0=E-dE, x1=E+dE).root
+    _,u_bound,nrf,tck = shoot(E_bound, rr, l=l, z=z, fn=urf, fnx=fnx, tckfnx=tckfnx, fnc=fnc, tckfnc=tckfnc, tckfn=tckur, vectorfield=vectorfield, xlim=xlim, ylim=ylim, isWF=isWF)
     return(E_bound, u_bound, nrf, tck)
 #+end_src
 **** Testing
@@ -469,7 +477,7 @@ def vectorfieldVH(w, t, p):
               p = [m1,m2,k1,k2,L1,L2,b1,b2]
     """
     x1, y1 = w
-    _, _, nrf, tck, z = p
+    _, _, nrf, tck,_,_,_,_, z = p
 
     # Create f = (x1',y1'):
     f = [y1,
@@ -650,7 +658,7 @@ fig = plt.figure()
 gs = fig.add_gridspec(2, hspace=0)
 
 axs = gs.subplots(sharex=True, sharey=False)
-fig.suptitle('Helium atom orbital energies')
+fig.suptitle('Helium atom ground state energy')
 
 axs[0].plot(range(cnt+1), E_conv, marker='.')
 axs[1].plot(range(cnt+1), dE_conv, marker=".", color='r')
@@ -662,6 +670,236 @@ for (i,ax) in enumerate(axs):
     ax.label_outer()
     ax.set_ylim(lims[i])
 
+axs[0].axhline(y = -2.861, color = 'b', linestyle = '--')
+axs[1].axhline(y = 0., color = 'r', linestyle = '--')
+axs[0].set(ylabel="E(He) (u.a.)")
+axs[1].set(ylabel="$\Delta E (u.a.)$")
+
+plt.savefig(path)
+<<dressPath>>
+#+end_src
+
+#+RESULTS:
+:results:
+[[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-4.png]]
+:end:
+
+** The local density Exchange potential
+
+The Hartree potential used above is not the full potential since
+we have substracted half of the electron density to take into
+account the self-energy correction. However, if we take the
+actual Hartree potential into account, the energy obtained is
+very far from the exact energy.
+
+In order to correct for this self interaction energy, we can use
+the local density exchange potential (LDA). A simple functional
+based on the electron gas is given as
+
+\[
+V_{\text{x}}(\mathbf{r}) = -\left( \frac{3}{\pi} \right )^{1/3} \times n^{1/3}(\mathbf{r})
+\]
+
+This local density based potential can correct for part of the self-energy error
+in the Hartree potential. Note that here, and for the calculation for the
+Hartree potential, the full density is to be taken. We can again
+write this interms of the radial function as
+
+\[
+V_{\text{x}}(\mathbf{r}) = -\left[ \frac{3u^2(r)}{2\pi^2r^2} \right ]^{1/3}
+\]
+
+and, using the above exchange energy, the total energy can then be
+written as
+
+#+Label: Eq15
+\begin{equation}
+E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r) + \frac{1}{2}\int \text{d}r\ V_{\text{x}}(r)u^2(r)
+\end{equation}
+
+The full equation the reads
+
+#+Label: Eq16
+\begin{equation}
+\begin{align*}
+y &= \begin{pmatrix} u \\ u' \end{pmatrix}\\
+y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ 2\left( \frac{l(l+1)}{r^2} -\frac{\mathcal{Z}}{r} + V_H + V_{\text{x}} - E \right) u \end{pmatrix}\\
+\end{align*}
+\end{equation}
+
+*** Vector Field
+#+begin_src python :results silent
+def vectorfieldX(w, t, p):
+    """
+    Defines the differential equations for the coupled spring-mass system.
+
+    Arguments:
+    w :  vector of the state variables:
+              w = [x1,y1,x2,y2]
+    t :  time
+    p :  vector of the parameters:
+              p = [m1,m2,k1,k2,L1,L2,b1,b2]
+    """
+    x1, y1 = w
+    e1, l1, urf, tckur, uxrf, tckurx,_, _, z = p
+
+    # Create f = (x1',y1'):
+    f = [y1,
+         2*(l1*(l1+1)/(t)**2 - z/(t) - e1 + 2*urf(t,tckur)/t + uxrf(t,urf,tckur) )*x1
+         ]
+
+    return f
+#+end_src
+*** Calculate energy
+#+begin_src python :results silent
+def calcEnergyVx(ei,urf,tckur,urxf,tckurx,nrf,tck,t=None,stoptime=60.0,numpoints=3200):
+    E = 2*ei
+    if t is None:
+        t = [stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)]
+    h = t[1]-t[0]
+    VHl = np.array([urf(x,tckur)/x for x in t])
+    Vx  = np.array([urxf(x,urf,tckurx) for x in t])
+    Nr2 = np.array([(nrf(x,tck))**2 for x in t])
+    eH = integrate.simps(VHl*Nr2, x=t)
+    ex = integrate.simps(Vx*Nr2, x=t)
+    print(eH)
+    E = E - eH + ex/2
+    return(E)
+#+end_src
+*** SCF cycle code
+#+begin_src python :results silent
+
+stoptime=60.0
+numpoints=3200
+rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
+
+# Get initial density
+E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-2.50,vectorfield=vectorfield)
+
+# Get initial ur
+qmax = 1.
+xlim = qmax
+ylim = 0.
+x1,urf,tckur = solve_SLP(fn=nrf, tckfn=tck, t=rr, xlim=xlim, ylim=ylim, vectorfield=vectorfieldVH, isWF=False)
+E0 = calcEnergy(E_bound, urf, tckur, nrf, tck)
+print(E_bound, E0)
+
+def urxf(x,urf,tckur):
+    numer = 3.*urf(x,tckur)*urf(x,tckur)
+    denom = 2.*np.pi*np.pi*x*x
+    return(-np.power(numer/denom,1/3))
+
+# Get initial density
+#E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-1.50,vectorfield=vectorfieldX, urf=urf, tckur=tckur, fnx=urxf, tckfnx=tckur)
+#print(E_bound)
+
+E_conv = []
+dE_conv = []
+E_conv.append(E0)
+dE_conv.append(E0)
+cnt = 0
+Ediff = 10.
+while cnt < 30 and abs(Ediff) > 1.E-4:
+
+    # Get density
+    E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-1.00,vectorfield=vectorfieldX, urf=urf, tckur=tckur, fnx=urxf, tckfnx=tckur)
+    # Get ur
+    x1,urf,tckur = solve_SLP(fn=nrf, tckfn=tck, t=rr, xlim=xlim, ylim=ylim, vectorfield=vectorfieldVH, isWF=False)
+    E1 = calcEnergyVx(E_bound, urf, tckur, urxf, tckur, nrf, tck,t=rr)
+    #E1 = E_bound
+    E_conv.append(E1)
+    Ediff = abs(E0-E1)
+    dE_conv.append(Ediff)
+    print(f"Iter : {cnt} E = {E1} Diff = {Ediff} E_bound={E_bound}")
+    E0 = E1
+
+    cnt += 1
+#+end_src
+*** Main Shoot
+#+begin_src python :results drawer :exports results :noweb yes
+path = "/home/chilkuri/Documents/codes/python/gscf/Fig-tmp5.png"
+
+plt.clf()
+fig, ax = plt.subplots()
+
+numpoints=3200
+stoptime=60.0
+rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
+EE = np.linspace(-2.1, 0.1, 100)
+u0s = [
+    shoot(E, rr, l=0, z=2., vectorfield=vectorfieldX, fn=urf, tckfn=tckur, fnx=urxf, tckfnx=tckur)[0] for E in EE
+]
+
+plt.plot(EE, u0s)
+plt.grid()
+plt.xlabel("E")
+plt.ylabel("u(0)")
+
+plt.savefig(path)
+<<dressPath>>
+#+end_src
+
+#+RESULTS:
+:results:
+[[/home/chilkuri/Documents/codes/python/gscf/Fig-tmp5.png]]
+:end:
+
+*** Main
+#+begin_src python :results drawer :exports results :noweb yes
+path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-tmp3.png"
+
+plt.clf()
+fig, ax = plt.subplots()
+
+numpoints=3200
+stoptime=60.0
+rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
+#E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-0.40,vectorfield=vectorfield)
+#E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-0.15,vectorfield=vectorfield)
+#E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-0.05,vectorfield=vectorfield)
+
+#E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-2.10,vectorfield=vectorfieldHe)
+E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-2.00,vectorfield=vectorfieldX, urf=urf, tckur=tckur, fnx=urxf, tckfnx=tckur)
+print(E_bound)
+
+x1n = [nrf(x,tck) for x in rr]
+plt.plot(rr, x1n)
+plt.grid()
+plt.xlabel("r")
+plt.ylabel("u(0)")
+
+plt.savefig(path)
+<<dressPath>>
+#+end_src
+
+#+RESULTS:
+:results:
+[[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-tmp3.png]]
+:end:
+
+** Figure
+#+begin_src python :results drawer :exports results :noweb yes
+path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-4.png"
+
+plt.clf()
+fig = plt.figure()
+gs = fig.add_gridspec(2, hspace=0)
+
+axs = gs.subplots(sharex=True, sharey=False)
+fig.suptitle('Helium atom ground state energy')
+
+axs[0].plot(range(cnt+1), E_conv, marker='.')
+axs[1].plot(range(cnt+1), dE_conv, marker=".", color='r')
+
+lims = [ [-5.5,-0.5],[-5.5,4.2]]
+
+# Hide x labels and tick labels for all but bottom plot.
+for (i,ax) in enumerate(axs):
+    ax.label_outer()
+    ax.set_ylim(lims[i])
+
+axs[0].axhline(y = -2.26 , color = 'g', linestyle = '--')
+axs[0].axhline(y = -2.72 , color = 'g', linestyle = '--')
 axs[0].axhline(y = -2.861, color = 'b', linestyle = '--')
 axs[1].axhline(y = 0., color = 'r', linestyle = '--')
 axs[0].set(ylabel="E(He) (u.a.)")
