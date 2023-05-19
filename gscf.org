@@ -6,6 +6,7 @@
 #+LaTeX_Header: \documentclass{article}
 #+LaTeX_Header: \usepackage{amsmath,amssymb}
 #+LaTeX_Header: \newcommand*\Laplace{\mathop{}\!\mathbin\bigtriangleup}
+#+STARTUP: showall indent latexpreview entitiespretty
 :END:
 
 :SETUP:
@@ -603,7 +604,7 @@ Ediff = 10.
 while cnt < 9 and abs(Ediff) > 1.E-4:
 
     # Get density
-    E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-0.50,vectorfield=vectorfield, urf=urf, tckur=tckur)
+    E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-1.50,vectorfield=vectorfield, urf=urf, tckur=tckur)
     # Get ur
     x1,urf,tckur = solve_SLP(fn=nrf, tckfn=tck, t=rr, xlim=xlim, ylim=ylim, vectorfield=vectorfieldVH, isWF=False)
     E1 = calcEnergy(E_bound, urf, tckur, nrf, tck,t=rr)
@@ -646,7 +647,7 @@ plt.savefig(path)
 
 #+RESULTS:
 :results:
-[[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-tmp3.png]]
+/tmp/babel-DzBZdg/python-LzHa4M
 :end:
 
 ** Figure
@@ -741,11 +742,11 @@ def vectorfieldX(w, t, p):
               p = [m1,m2,k1,k2,L1,L2,b1,b2]
     """
     x1, y1 = w
-    e1, l1, urf, tckur, uxrf, tckurx,_, _, z = p
+    e1, l1, urf, tckur, uxrf, tckurx, nrf, tck, z = p
 
     # Create f = (x1',y1'):
     f = [y1,
-         2*(l1*(l1+1)/(t)**2 - z/(t) - e1 + 2*urf(t,tckur)/t + uxrf(t,urf,tckur) )*x1
+         2*(l1*(l1+1)/(t)**2 - z/(t) - e1 + 2*urf(t,tckur)/t + uxrf(t,nrf,tck) )*x1
          ]
 
     return f
@@ -762,7 +763,7 @@ def calcEnergyVx(ei,urf,tckur,urxf,tckurx,nrf,tck,t=None,stoptime=60.0,numpoints
     Nr2 = np.array([(nrf(x,tck))**2 for x in t])
     eH = integrate.simps(VHl*Nr2, x=t)
     ex = integrate.simps(Vx*Nr2, x=t)
-    print(eH)
+    print((eH, ex/2))
     E = E - eH + ex/2
     return(E)
 #+end_src
@@ -784,14 +785,10 @@ x1,urf,tckur = solve_SLP(fn=nrf, tckfn=tck, t=rr, xlim=xlim, ylim=ylim, vectorfi
 E0 = calcEnergy(E_bound, urf, tckur, nrf, tck)
 print(E_bound, E0)
 
-def urxf(x,urf,tckur):
-    numer = 3.*urf(x,tckur)*urf(x,tckur)
+def urxf(x,nrf,tck):
+    numer = 3.*nrf(x,tck)*nrf(x,tck)
     denom = 2.*np.pi*np.pi*x*x
     return(-np.power(numer/denom,1/3))
-
-# Get initial density
-#E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-1.50,vectorfield=vectorfieldX, urf=urf, tckur=tckur, fnx=urxf, tckfnx=tckur)
-#print(E_bound)
 
 E_conv = []
 dE_conv = []
@@ -802,7 +799,7 @@ Ediff = 10.
 while cnt < 30 and abs(Ediff) > 1.E-4:
 
     # Get density
-    E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-1.00,vectorfield=vectorfieldX, urf=urf, tckur=tckur, fnx=urxf, tckfnx=tckur)
+    E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-1.00,vectorfield=vectorfieldX, urf=urf, tckur=tckur, fnx=urxf, tckfnx=tckur, fnc=nrf, tckfnc=tck)
     # Get ur
     x1,urf,tckur = solve_SLP(fn=nrf, tckfn=tck, t=rr, xlim=xlim, ylim=ylim, vectorfield=vectorfieldVH, isWF=False)
     E1 = calcEnergyVx(E_bound, urf, tckur, urxf, tckur, nrf, tck,t=rr)
