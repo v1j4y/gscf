@@ -364,6 +364,8 @@ numpoints=3200
 stoptime=60.0
 rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
 E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-1.00,vectorfield=vectorfield)
+nrf_orig=deepcopy(nrf)
+tck_orig=deepcopy(tck)
 #E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-0.15,vectorfield=vectorfield)
 #E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-0.05,vectorfield=vectorfield)
 
@@ -757,14 +759,13 @@ def calcEnergyVx(ei,urf,tckur,urxf,tckurx,nrf,tck,t=None,stoptime=60.0,numpoints
     E = 2*ei
     if t is None:
         t = [stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)]
-    h = t[1]-t[0]
     VHl = np.array([urf(x,tckur)/x for x in t])
-    Vx  = np.array([urxf(x,urf,tckurx) for x in t])
-    Nr2 = np.array([(nrf(x,tck))**2 for x in t])
-    eH = integrate.simps(VHl*Nr2, x=t)
-    ex = integrate.simps(Vx*Nr2, x=t)
-    print((eH, ex/2))
-    E = E - eH + ex/2
+    Vxl = np.array([urxf(x,nrf,tck) for x in t])
+    ur2 = np.array([(nrf(x,tck))**2 for x in t])
+    eH = integrate.simps(VHl*ur2, x=t)
+    ex = integrate.simps(Vxl*ur2, x=t)
+    print((eH, (ex/2)))
+    E = E - eH + (ex/2)
     return(E)
 #+end_src
 *** SCF cycle code
@@ -802,7 +803,7 @@ while cnt < 30 and abs(Ediff) > 1.E-4:
     E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-1.00,vectorfield=vectorfieldX, urf=urf, tckur=tckur, fnx=urxf, tckfnx=tckur, fnc=nrf, tckfnc=tck)
     # Get ur
     x1,urf,tckur = solve_SLP(fn=nrf, tckfn=tck, t=rr, xlim=xlim, ylim=ylim, vectorfield=vectorfieldVH, isWF=False)
-    E1 = calcEnergyVx(E_bound, urf, tckur, urxf, tckur, nrf, tck,t=rr)
+    E1 = calcEnergyVx(E_bound, urf, tckur, urxf, tckur, nrf, tck, t=rr)
     #E1 = E_bound
     E_conv.append(E1)
     Ediff = abs(E0-E1)
@@ -843,7 +844,7 @@ plt.savefig(path)
 
 *** Main
 #+begin_src python :results drawer :exports results :noweb yes
-path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-tmp3.png"
+path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-tmp6.png"
 
 plt.clf()
 fig, ax = plt.subplots()
@@ -856,11 +857,12 @@ rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpo
 #E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-0.05,vectorfield=vectorfield)
 
 #E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-2.10,vectorfield=vectorfieldHe)
-E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-2.00,vectorfield=vectorfieldX, urf=urf, tckur=tckur, fnx=urxf, tckfnx=tckur)
-print(E_bound)
-
-x1n = [nrf(x,tck) for x in rr]
+#E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-2.00,vectorfield=vectorfieldX, urf=urf, tckur=tckur, fnx=urxf, tckfnx=tckur)
+#print(E_bound)
+xa  = [np.sqrt(4)*x*np.exp(-x) for x in rr]
+x1n = [nrf_orig(x,tck_orig) for x in rr]
 plt.plot(rr, x1n)
+plt.plot(rr, xa)
 plt.grid()
 plt.xlabel("r")
 plt.ylabel("u(0)")
@@ -871,12 +873,12 @@ plt.savefig(path)
 
 #+RESULTS:
 :results:
-[[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-tmp3.png]]
+[[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-tmp6.png]]
 :end:
 
 ** Figure
 #+begin_src python :results drawer :exports results :noweb yes
-path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-4.png"
+path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-6.png"
 
 plt.clf()
 fig = plt.figure()
@@ -908,5 +910,5 @@ plt.savefig(path)
 
 #+RESULTS:
 :results:
-[[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-4.png]]
+[[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-6.png]]
 :end:
