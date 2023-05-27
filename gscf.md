@@ -60,15 +60,50 @@ class="spurious-link" target="Eq2">*Eq2*</span> is in cartesian
 coordinates $\mathbf{x}$ and can be transformed to spherical coordinates
 via a coordinate transformation.
 
+$$
+x_1 = r\sin{\theta}\cos{\phi}
+$$ $$
+x_2 = r\sin{\theta}\sin{\phi}
+$$ $$
+x_3 = r\cos{\theta}
+$$
+
 In spherical coordinates, the operator $\hat{H}$ is transformed to
+
+$$
+\hat{H} = -\frac{1}{2}\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial}{\partial r} \right)
+$$ $$
+   -\frac{1}{r^2}\frac{1}{\sin{\theta}}\frac{\partial}{\partial\theta} \left(\sin{\theta}\frac{\partial}{\partial\theta} \right)
+$$ $$
+   -\frac{1}{r^2}\frac{1}{\sin{\theta}^2}\frac{\partial^2}{\partial\phi^2} + V
+$$
 
 We can then separate the wavefunction to three independent variables
 $\psi(\mathbf{x})=R(r)\Theta(\theta)\Phi(\phi)$ to obtain three separate
 SLPs
 
+$$
+\left (
+-\frac{1}{2}\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial}{\partial r} \right) + \frac{l(l+1)}{r^2} + V(r) \right)R(r) = \lambda R(r)
+$$
+
+$$
+\frac{1}{\sin{\theta}}\left (-\frac{\partial}{\partial \theta} \left( \sin{\theta} \frac{\partial}{\partial \theta} \right)+ \frac{m^2}{\sin{\theta}} \right)\Theta(\theta) = l(l+1)
+$$ $$
+\Theta(\theta)-\frac{\partial^2}{\partial \phi^2}\Phi(\phi) = m^2 \Phi(\phi)
+$$
+
 With only $r$ being the dependent variable i.e. the first equation. Here
 we can do a further transformation of the dependent variable
 $u(r) = r R(r)$ which gives the SLP
+
+$$
+-\frac{1}{2}\frac{\partial^2 u(r)}{\partial r^2}+ q(r) u(r) = \lambda u(r)
+$$ $$
+q(r) = \frac{l(l+1)}{r^2} + V(r)
+$$ $$
+p(r) = g(r) = 1
+$$
 
 These (Eq:<span class="spurious-link" target="Eq6">*Eq6*</span>) are the
 working equations.
@@ -77,6 +112,12 @@ working equations.
 
 First, we transfrom Eq:<span class="spurious-link"
 target="Eq6">*Eq6*</span> into a set of coupled linear ODEs
+
+$$
+y = \begin{pmatrix} u \\ u' \end{pmatrix}
+$$ $$
+y' = \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ 2\left( \frac{l(l+1)}{r^2} -\frac{\mathcal{Z}}{r} - E \right) u \end{pmatrix}
+$$
 
 The boundary conditions are at $r=0$ and $r=\infty$ with $u(r)=0$ and
 $u(\infty)=0$.
