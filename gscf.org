@@ -65,30 +65,25 @@ on the particle. The Eq:[[Eq2]] is in cartesian coordinates $\mathbf{x}$ and
 can be transformed to spherical coordinates via a coordinate transformation.
 
 #+Label: Eq3
-\begin{equation}
 \begin{align*}
 x_1 &= r\sin{\theta}\cos{\phi},\\
 x_2 &= r\sin{\theta}\sin{\phi},\\
 x_3 &= r\cos{\theta}
 \end{align*}
-\end{equation}
 
 In spherical coordinates, the operator $\hat{H}$ is transformed to
 
 #+Label: Eq4
-\begin{equation}
 \begin{align*}
 \hat{H} &= -\frac{1}{2}\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial}{\partial r} \right) \\
 &  -\frac{1}{r^2}\frac{1}{\sin{\theta}}\frac{\partial}{\partial\theta} \left(\sin{\theta}\frac{\partial}{\partial\theta} \right)\\
 &  -\frac{1}{r^2}\frac{1}{\sin{\theta}^2}\frac{\partial^2}{\partial\phi^2} + V
 \end{align*}
-\end{equation}
 
 We can then separate the wavefunction to three independent variables
 $\psi(\mathbf{x})=R(r)\Theta(\theta)\Phi(\phi)$ to obtain three separate SLPs
 
 #+Label: Eq5
-\begin{equation}
 \begin{align*}
 \left (
 -\frac{1}{2}\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial}{\partial r} \right)
@@ -100,21 +95,18 @@ $\psi(\mathbf{x})=R(r)\Theta(\theta)\Phi(\phi)$ to obtain three separate SLPs
  \right)\Theta(\theta) &= l(l+1) \Theta(\theta)\\
 -\frac{\partial^2}{\partial \phi^2}\Phi(\phi) &= m^2 \Phi(\phi)\\
 \end{align*}
-\end{equation}
 
 With only $r$ being the dependent variable i.e. the first equation.
 Here we can do a further transformation of the dependent variable
 $u(r) = r R(r)$ which gives the SLP
 
 #+Label: Eq6
-\begin{equation}
 \begin{align*}
 -\frac{1}{2}\frac{\partial^2 u(r)}{\partial r^2}
 + q(r) u(r) &= \lambda u(r) \\
 q(r) &= \frac{l(l+1)}{r^2} + V(r)\\
 p(r) &= g(r) = 1
 \end{align*}
-\end{equation}
 
 These (Eq:[[Eq6]]) are the working equations.
 
@@ -124,12 +116,10 @@ First, we transfrom Eq:[[Eq6]] into a set of coupled linear
 ODEs
 
 #+Label: Eq7
-\begin{equation}
 \begin{align*}
 y &= \begin{pmatrix} u \\ u' \end{pmatrix}\\
 y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ 2\left( \frac{l(l+1)}{r^2} -\frac{\mathcal{Z}}{r} - E \right) u \end{pmatrix}\\
 \end{align*}
-\end{equation}
 
 The boundary conditions are at $r=0$ and $r=\infty$ with
 $u(r)=0$ and $u(\infty)=0$.
@@ -393,9 +383,9 @@ Here we need to include the Hartree potential $V_H$ which is the
 repulsion between the two electrons
 
 #+Label: Eq8
-\begin{equation}
+\[
 V_H(\mathbf{r}) = \int dr'^3 n(\mathbf{r}')\frac{1}{\mathbf{r}-\mathbf{r}'}
-\end{equation}
+\]
 
 Where the $n(\mathbf{r})$ is the density which is given as
 
@@ -407,14 +397,10 @@ where we assume a closed shell spin singlet slater determinant.
 In order to get the radial part of the density, we can use the
 radial part of the wavefunction $\psi(\mathbf{r})$ which is $R(\mathbf{r})$.
 
-\[
-\begin{equation}
 \begin{align*}
 n(r) &= 2\sum_i^{N_{occ}} |R(r)|^2 \\
 n(r) &= 2\sum_i^{N_{occ}} \left |\frac{u(r)}{r}\right|^2 \\
 \end{align*}
-\end{equation}
-\]
 
 
 ** Poisson equation
@@ -424,26 +410,26 @@ transform it into an SLP which we can again solve using the
 above methodology the solution of the Hydrogen atom.
 
 #+Label: Eq9
-\begin{equation}
+\[
 \nabla^2 V_H(\mathbf{r}) = -4 \pi n(\mathbf{r})
-\end{equation}
+\]
 
 This can again be transformed using the variable substitution
 $u(r)=rR(r)$ to a 1D equation.
 
 #+Label: Eq10
-\begin{equation}
+\[
 \frac{\partial^2 U(r)}{\partial r} = -4\pi r n(r)
-\end{equation}
+\]
 
 The fact that $n(r)$ is simply $R(r)^2$ by definition and the
 fact that $u(r)$ is normalized we can drop off $4\pi$ to finally
 obtain
 
 #+Label: Eq11
-\begin{equation}
+\[
 U''(r) = -\frac{u(r)^2}{r}
-\end{equation}
+\]
 
 This is the SLP that we need to solve to obtain the
 hartree potential $V_H(r)$.
@@ -452,12 +438,10 @@ hartree potential $V_H(r)$.
 
 The BVP Eq:[[Eq11]] takes the following boundary conditions
 
-\begin{equation}
 \begin{align*}
 U(0) &= 0\\
 U(r_{max}) &= q_{max}
 \end{align*}
-\end{equation}
 
 where, $q_{max}$ is the total charge. We shall use these conditions
 in the shooting method to find the correct Hartree potential.
@@ -537,9 +521,9 @@ In order to calculate the total energy, we now also need to
 incorporate the Hartee potential
 
 #+Label: Eq12
-\begin{equation}
+\[
 E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
-\end{equation}
+\]
 
 
 *** Vector Field
@@ -738,19 +722,17 @@ and, using the above exchange energy, the total energy can then be
 written as
 
 #+Label: Eq15
-\begin{equation}
+\[
 E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r) + \frac{1}{2}\int \text{d}r\ V_{\text{x}}(r)u^2(r)
-\end{equation}
+\]
 
 The full equation the reads
 
 #+Label: Eq16
-\begin{equation}
 \begin{align*}
 y &= \begin{pmatrix} u \\ u' \end{pmatrix}\\
 y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ 2\left( \frac{l(l+1)}{r^2} -\frac{\mathcal{Z}}{r} + V_H + V_{\text{x}} - E \right) u \end{pmatrix}\\
 \end{align*}
-\end{equation}
 
 *** Vector Field
 #+begin_src python :results silent

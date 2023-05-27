@@ -283,6 +283,10 @@ E_bound,_,_,_ = get_energy_and_density(0,rr,vectorfield=vectorfield)
 Here we need to include the Hartree potential $V_H$ which is the
 repulsion between the two electrons
 
+$$
+V_H(\mathbf{r}) = \int dr'^3 n(\mathbf{r}')\frac{1}{\mathbf{r}-\mathbf{r}'}
+$$
+
 Where the $n(\mathbf{r})$ is the density which is given as
 
 $$
@@ -293,15 +297,6 @@ where we assume a closed shell spin singlet slater determinant. In order
 to get the radial part of the density, we can use the radial part of the
 wavefunction $\psi(\mathbf{r})$ which is $R(\mathbf{r})$.
 
-$$
-\begin{equation}
-\begin{align*}
-n(r) &= 2\sum_i^{N_{occ}} |R(r)|^2 \\
-n(r) &= 2\sum_i^{N_{occ}} \left |\frac{u(r)}{r}\right|^2 \\
-\end{align*}
-\end{equation}
-$$
-
 ## Poisson equation
 
 In order to calculate the Hartree potential Eq:<span
@@ -309,11 +304,23 @@ class="spurious-link" target="Eq8">*Eq8*</span>, we shall transform it
 into an SLP which we can again solve using the above methodology the
 solution of the Hydrogen atom.
 
+$$
+\nabla^2 V_H(\mathbf{r}) = -4 \pi n(\mathbf{r})
+$$
+
 This can again be transformed using the variable substitution
 $u(r)=rR(r)$ to a 1D equation.
 
+$$
+\frac{\partial^2 U(r)}{\partial r} = -4\pi r n(r)
+$$
+
 The fact that $n(r)$ is simply $R(r)^2$ by definition and the fact that
 $u(r)$ is normalized we can drop off $4\pi$ to finally obtain
+
+$$
+U''(r) = -\frac{u(r)^2}{r}
+$$
 
 This is the SLP that we need to solve to obtain the hartree potential
 $V_H(r)$.
@@ -381,6 +388,10 @@ energy stays constant.
 
 In order to calculate the total energy, we now also need to incorporate
 the Hartee potential
+
+$$
+E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
+$$
 
 ### Vector Field
 
@@ -529,6 +540,10 @@ $$
 
 and, using the above exchange energy, the total energy can then be
 written as
+
+$$
+E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r) + \frac{1}{2}\int \text{d}r\ V_{\text{x}}(r)u^2(r)
+$$
 
 The full equation the reads
 
