@@ -9,6 +9,7 @@
 #+STARTUP: showall indent latexpreview entitiespretty
 :END:
 
+* Setup :noexport:
 :SETUP:
 #+begin_src python :session p1 :results silent
 import numpy as np
@@ -19,6 +20,7 @@ from scipy.optimize import root_scalar
 import matplotlib.pyplot as plt
 #+end_src
 :END:
+
 
 * Introduction
 

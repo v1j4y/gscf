@@ -1,4 +1,4 @@
-% Created 2023-05-27 sam. 22:20
+% Created 2023-05-27 sam. 22:26
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
@@ -44,17 +44,8 @@
 \tableofcontents
 
 
-\begin{verbatim}
-import numpy as np
-from scipy.integrate import odeint
-from scipy import integrate
-from scipy import interpolate
-from scipy.optimize import root_scalar
-import matplotlib.pyplot as plt
-\end{verbatim}
-
 \section{Introduction}
-\label{sec:org3667059}
+\label{sec:org3096347}
 
 The Schrodinger equation is a certain class of Boundary Value Problem (BVP).
 Solution of the Schrodinger equation results in the eigenvalues(\(\lambda\)) and
@@ -80,7 +71,7 @@ In the present manuscript, we shall document numerical methods for the solution
 of various types of Hamiltonians and analyze their spectra and wavefunctions.
 
 \section{Hydrogen atom}
-\label{sec:org4f60c42}
+\label{sec:org8e6d43b}
 We begin with the most simplest SLP which is the solution
 of the Hamiltonian for the hydrogen atom Eq:\ref{Eq2}
 
@@ -146,7 +137,7 @@ p(r) = g(r) = 1
 These (Eq:\ref{Eq6}) are the working equations.
 
 \subsection{Methodology}
-\label{sec:org5cda928}
+\label{sec:org3a94347}
 
 First, we transfrom Eq:\ref{Eq6} into a set of coupled linear
 ODEs
@@ -163,7 +154,7 @@ The boundary conditions are at \(r=0\) and \(r=\infty\) with
 
 \begin{enumerate}
 \item Vector Field
-\label{sec:orgec1e4ec}
+\label{sec:org1bc9098}
 \begin{verbatim}
 def vectorfield(w, t, p):
     """
@@ -187,7 +178,7 @@ def vectorfield(w, t, p):
     return f
 \end{verbatim}
 \item Solution
-\label{sec:org6bd2d87}
+\label{sec:org07ab579}
 \begin{verbatim}
 def solve_SLP(fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None, e1=-0.5, l1=0, z=1., t=None, numpoints=1600, stoptime=15.0, xlim=0, ylim=-1.0E-6, vectorfield=None, isWF=True):
 
@@ -253,14 +244,14 @@ def solve_SLP(fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None,
 \end{enumerate}
 
 \subsubsection{Shooting method}
-\label{sec:org66536a7}
+\label{sec:org3ba1fb2}
 
 Here we start with \(u(\infty)=0\) and integrate towards
 \(r=0\). This is more stable for the convergence with
 respect to the Hydrogen atom.
 
 \subsubsection{Code}
-\label{sec:org26eb34b}
+\label{sec:orgc7bd29f}
 Main function that does the shooting.
 \begin{verbatim}
 def shoot(E, t, l=0, z=1., fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None, xlim=0, ylim=-1.E-6, vectorfield=None, isWF=True):
@@ -275,7 +266,7 @@ def shoot(E, t, l=0, z=1., fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None,
 \end{verbatim}
 
 \subsubsection{Testing}
-\label{sec:org24ea0f6}
+\label{sec:org67d321b}
 Test the function.
 \begin{verbatim}
 rr = np.logspace(-6, 5, 500)
@@ -289,23 +280,23 @@ u0s = [
 
 \end{verbatim}
 \subsubsection{Plot}
-\label{sec:org953b6bb}
+\label{sec:org10385c5}
 Plot to check results.
 \begin{center}
 \includegraphics[width=.9\linewidth]{/home/chilkuri/Documents/codes/python/gscf/Fig-tmp.png}
 \end{center}
 
 \subsubsection{Plots}
-\label{sec:org12bf04b}
+\label{sec:org19a0430}
 \subsubsection{Main}
-\label{sec:orgee794dc}
+\label{sec:org9949894}
 Make some figures.
 \begin{center}
 \includegraphics[width=.9\linewidth]{/home/chilkuri/Documents/codes/python/gscf/Fig-1.png}
 \end{center}
 
 \subsubsection{Solution of the SLP}
-\label{sec:org8681974}
+\label{sec:org9675cca}
 
 Here we have to search for the value of \(E\)
 for which the BVP has the final conditions satisfied
@@ -313,7 +304,7 @@ i.e. \(u(r)=0\). This is done using the optimization
 routine from \texttt{scipy}.
 
 \subsubsection{Code}
-\label{sec:org0e3ad7a}
+\label{sec:orgd9e4e59}
 
 The code is as follows
 
@@ -339,7 +330,7 @@ def get_energy_and_density(l,rr,z=1.,E=None, vectorfield=None, urf=None, tckur=N
     return(E_bound, u_bound, nrf, tck)
 \end{verbatim}
 \subsubsection{Testing}
-\label{sec:org1b51349}
+\label{sec:orgcb18275}
 Test the functions.
 \begin{verbatim}
 numpoints=3200
@@ -348,11 +339,11 @@ rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpo
 E_bound,_,_,_ = get_energy_and_density(0,rr,vectorfield=vectorfield)
 \end{verbatim}
 \subsubsection{Main}
-\label{sec:org66fab06}
+\label{sec:orgd0163e1}
 Make figures.
 
 \section{Helium atom}
-\label{sec:org219ad1a}
+\label{sec:org546e85b}
 Here we need to include the Hartree potential \(V_H\) which is the
 repulsion between the two electrons
 
@@ -377,7 +368,7 @@ n(r) &= 2\sum_i^{N_{occ}} \left |\frac{u(r)}{r}\right|^2 \\
 
 
 \subsection{Poisson equation}
-\label{sec:org56b7f3a}
+\label{sec:org46d53c6}
 
 In order to calculate the Hartree potential Eq:\ref{Eq8}, we shall
 transform it into an SLP which we can again solve using the
@@ -406,7 +397,7 @@ This is the SLP that we need to solve to obtain the
 hartree potential \(V_H(r)\).
 
 \subsection{Solution}
-\label{sec:org3f249d0}
+\label{sec:org42835db}
 
 The BVP Eq:\ref{Eq11} takes the following boundary conditions
 
@@ -423,7 +414,7 @@ q_{max} = \int_0^{max} \text{d}r\ u^2(r)
 \]
 
 \subsubsection{Vector Field}
-\label{sec:orgdaf50c6}
+\label{sec:org06633f5}
 \begin{verbatim}
 def vectorfieldVH(w, t, p):
     """
@@ -446,7 +437,7 @@ def vectorfieldVH(w, t, p):
     return f
 \end{verbatim}
 \subsubsection{Testing}
-\label{sec:orgd858ea1}
+\label{sec:org0470a91}
 \begin{verbatim}
 numpoints=400
 stoptime=15.0
@@ -457,13 +448,13 @@ ylim = 0
 x1,urf,tckur = solve_SLP(fn=nrf, tckfn=tck, t=rr, xlim=xlim, ylim=ylim, vectorfield=vectorfieldVH)
 \end{verbatim}
 \subsubsection{Main}
-\label{sec:org51caa7e}
+\label{sec:org700d4cb}
 \begin{center}
 \includegraphics[width=.9\linewidth]{/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-2.png}
 \end{center}
 
 \subsection{Self-consistent field cycle}
-\label{sec:org07cac0b}
+\label{sec:org9a9134e}
 
 In order to find the solution, we need to perform a SCF loop
 so that the energy stays constant.
@@ -477,7 +468,7 @@ E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
 
 
 \subsubsection{Vector Field}
-\label{sec:org607ff8f}
+\label{sec:org287d26f}
 \begin{verbatim}
 def vectorfieldHe(w, t, p):
     """
@@ -501,7 +492,7 @@ def vectorfieldHe(w, t, p):
     return f
 \end{verbatim}
 \subsubsection{Calculate energy}
-\label{sec:org5d50c29}
+\label{sec:org7d17dc6}
 \begin{verbatim}
 def calcEnergy(ei,urf,tckur,nrf,tck,t=None,stoptime=60.0,numpoints=3200):
     E = 2*ei
@@ -516,7 +507,7 @@ def calcEnergy(ei,urf,tckur,nrf,tck,t=None,stoptime=60.0,numpoints=3200):
     return(E)
 \end{verbatim}
 \subsubsection{SCF cycle code}
-\label{sec:org9f3270c}
+\label{sec:org7e5a20c}
 \begin{verbatim}
 
 stoptime=60.0
@@ -557,16 +548,16 @@ while cnt < 9 and abs(Ediff) > 1.E-4:
     cnt += 1
 \end{verbatim}
 \subsubsection{Main}
-\label{sec:org05b6a3d}
+\label{sec:org87f3c95}
 
 \subsection{Figure}
-\label{sec:org4aa9fe3}
+\label{sec:orgac83054}
 \begin{center}
 \includegraphics[width=.9\linewidth]{/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-4.png}
 \end{center}
 
 \subsection{The local density Exchange potential}
-\label{sec:org9d23a8d}
+\label{sec:org03fa1ad}
 
 The Hartree potential used above is not the full potential since
 we have substracted half of the electron density to take into
@@ -629,7 +620,7 @@ y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ 2\left( \f
 \end{align*}
 
 \subsubsection{Vector Field}
-\label{sec:org8216bed}
+\label{sec:org6071ef3}
 \begin{verbatim}
 def vectorfieldX(w, t, p):
     """
@@ -653,7 +644,7 @@ def vectorfieldX(w, t, p):
     return f
 \end{verbatim}
 \subsubsection{Calculate energy}
-\label{sec:orge0f3a58}
+\label{sec:org5ac077e}
 \begin{verbatim}
 def calcEnergyVx(ei,urf,tckur,urxf,tckurx,nrf,tck,t=None,stoptime=60.0,numpoints=3200):
     E = 2*ei
@@ -669,7 +660,7 @@ def calcEnergyVx(ei,urf,tckur,urxf,tckurx,nrf,tck,t=None,stoptime=60.0,numpoints
     return(E)
 \end{verbatim}
 \subsubsection{SCF cycle code}
-\label{sec:org47ac654}
+\label{sec:orga45e335}
 \begin{verbatim}
 
 stoptime=60.0
@@ -715,16 +706,16 @@ while cnt < 30 and abs(Ediff) > 1.E-4:
     cnt += 1
 \end{verbatim}
 \subsubsection{Main Shoot}
-\label{sec:org601e5a0}
+\label{sec:org1216902}
 \begin{center}
 \includegraphics[width=.9\linewidth]{/home/chilkuri/Documents/codes/python/gscf/Fig-tmp5.png}
 \end{center}
 
 \subsubsection{Main}
-\label{sec:org461cfc3}
+\label{sec:orgf23c009}
 
 \subsection{Figure}
-\label{sec:orge35b1a7}
+\label{sec:org5acd386}
 \begin{center}
 \includegraphics[width=.9\linewidth]{/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-6.png}
 \end{center}
