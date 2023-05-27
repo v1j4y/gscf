@@ -3,7 +3,7 @@
 #+AUTHOR: Vijay Gopal Chilkuri
 #+EMAIL: vijay.gopal.c@gmail.com
 #+DATA: <2023-05-14 dim.>
-#+LaTeX_Header: \documentclass{article}
+#+LaTeX_Header: \documentclass[fleqn]{article}
 #+LaTeX_Header: \usepackage{amsmath,amssymb}
 #+LaTeX_Header: \newcommand*\Laplace{\mathop{}\!\mathbin\bigtriangleup}
 #+STARTUP: showall indent latexpreview entitiespretty
@@ -703,10 +703,32 @@ based on the electron gas is given as
 V_{\text{x}}(\mathbf{r}) = -\left( \frac{3}{\pi} \right )^{1/3} \times n^{1/3}(\mathbf{r})
 \]
 
+
+This potential is defined as the partial derivative of the exchange energy
+
+\[
+V_{\text{x}}[n](\mathbf{r}) = \frac{\partial}{\partial n (\mathbf{r})}E_{x}[n]
+\]
+
+And the exchange energy is given as
+
+\[
+E_{x}[n] = \int \text{d}^3 r \epsilon_{x}[n(\mathbf{r})]n(\mathbf{r})
+\]
+
+where the exchange energy density is given as
+
+\[
+\epsilon_{x}[n(\mathbf{r})] = -(3/4)(3/\pi)^{1/3} \times n^{1/3}(\mathbf{r})
+\]
+
+The local density exchange potential is derived from this local
+energy density expression.
+
 This local density based potential can correct for part of the self-energy error
 in the Hartree potential. Note that here, and for the calculation for the
 Hartree potential, the full density is to be taken. We can again
-write this interms of the radial function as
+write this in terms of the radial function as
 
 \[
 V_{\text{x}}(\mathbf{r}) = -\left[ \frac{3u^2(r)}{2\pi^2r^2} \right ]^{1/3}
