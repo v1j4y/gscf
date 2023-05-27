@@ -230,7 +230,8 @@ Here we start with $u(\infty)=0$ and integrate towards
 $r=0$. This is more stable for the convergence with
 respect to the Hydrogen atom.
 
-**** Code
+*** Code
+Main function that does the shooting.
 #+begin_src python :results silent
 def shoot(E, t, l=0, z=1., fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None, xlim=0, ylim=-1.E-6, vectorfield=None, isWF=True):
    if vectorfield is None:
@@ -243,7 +244,8 @@ def shoot(E, t, l=0, z=1., fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None,
    return u[0] - t[0] * (u[1] - u[0])/(t[1] - t[0]), u, fnout, tckfnout
 #+end_src
 
-**** Testing
+*** Testing
+Test the function.
 #+begin_src python :results silent
 rr = np.logspace(-6, 5, 500)
 numpoints=400
@@ -255,7 +257,8 @@ u0s = [
 ]
 
 #+end_src
-**** Plot
+*** Plot
+Plot to check results.
 #+begin_src python :results drawer :exports results :noweb yes
 path = "/home/chilkuri/Documents/codes/python/gscf/Fig-tmp.png"
 
@@ -282,7 +285,7 @@ plt.savefig(path)
 :end:
 
 *** Plots
-**** Plotting stuff
+*** Plotting stuff :noexport:
 #+NAME: dressPath
 #+BEGIN_SRC python :session p1 :noweb
 
@@ -291,7 +294,8 @@ plt.savefig(path)
 "[["+path+"]]"
 #+END_SRC
 
-**** Main
+*** Main
+Make some figures.
 #+begin_src python :results drawer :exports results :noweb yes
 path = "/home/chilkuri/Documents/codes/python/gscf/Fig-1.png"
 
@@ -327,7 +331,10 @@ for which the BVP has the final conditions satisfied
 i.e. $u(r)=0$. This is done using the optimization
 routine from ~scipy~.
 
-**** Code
+*** Code
+
+The code is as follows
+
 #+begin_src python :results silent
 def get_energy_and_density(l,rr,z=1.,E=None, vectorfield=None, urf=None, tckur=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None, xlim=0., ylim=-1.0E-6, isWF=True):
     dE = 0.51 # scan resolution to look for sign changes
@@ -349,14 +356,16 @@ def get_energy_and_density(l,rr,z=1.,E=None, vectorfield=None, urf=None, tckur=N
     _,u_bound,nrf,tck = shoot(E_bound, rr, l=l, z=z, fn=urf, fnx=fnx, tckfnx=tckfnx, fnc=fnc, tckfnc=tckfnc, tckfn=tckur, vectorfield=vectorfield, xlim=xlim, ylim=ylim, isWF=isWF)
     return(E_bound, u_bound, nrf, tck)
 #+end_src
-**** Testing
+*** Testing
+Test the functions.
 #+begin_src python :results silent
 numpoints=3200
 stoptime=60.0
 rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
 E_bound,_,_,_ = get_energy_and_density(0,rr,vectorfield=vectorfield)
 #+end_src
-**** Main
+*** Main
+Make figures.
 #+begin_src python :results drawer :exports results :noweb yes
 path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-1.png"
 
@@ -935,6 +944,3 @@ plt.savefig(path)
 pandoc --from=org --to=gfm gscf.org > gscf.md
 jupytext --to ipynb gscf.md
    #+END_SRC
-
-   #+RESULTS:
-   : /home/chilkuri/Documents/codes/python/gscf

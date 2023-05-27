@@ -217,7 +217,9 @@ def solve_SLP(fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None,
 Here we start with $u(\infty)=0$ and integrate towards $r=0$. This is
 more stable for the convergence with respect to the Hydrogen atom.
 
-1.  Code
+### Code
+
+Main function that does the shooting.
 
 ``` python
 def shoot(E, t, l=0, z=1., fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None, xlim=0, ylim=-1.E-6, vectorfield=None, isWF=True):
@@ -231,7 +233,9 @@ def shoot(E, t, l=0, z=1., fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None,
    return u[0] - t[0] * (u[1] - u[0])/(t[1] - t[0]), u, fnout, tckfnout
 ```
 
-2.  Testing
+### Testing
+
+Test the function.
 
 ``` python
 rr = np.logspace(-6, 5, 500)
@@ -245,30 +249,25 @@ u0s = [
 
 ```
 
-3.  Plot
+### Plot
+
+Plot to check results.
 
 <div class="RESULTS drawer">
 
-![](file:///home/chilkuri/Documents/codes/python/gscf/Fig-tmp.png)
+![](file:./Fig-tmp.png)
 
 </div>
 
 ### Plots
 
-1.  Plotting stuff
+### Main
 
-``` python
-
-# "path" variable must be set by block that
-# expands this org source code block
-"[["+path+"]]"
-```
-
-2.  Main
+Make some figures.
 
 <div class="RESULTS drawer">
 
-![](file:///home/chilkuri/Documents/codes/python/gscf/Fig-1.png)
+![](file:./Fig-1.png)
 
 </div>
 
@@ -278,7 +277,9 @@ Here we have to search for the value of $E$ for which the BVP has the
 final conditions satisfied i.e. $u(r)=0$. This is done using the
 optimization routine from `scipy`.
 
-1.  Code
+### Code
+
+The code is as follows
 
 ``` python
 def get_energy_and_density(l,rr,z=1.,E=None, vectorfield=None, urf=None, tckur=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None, xlim=0., ylim=-1.0E-6, isWF=True):
@@ -302,7 +303,9 @@ def get_energy_and_density(l,rr,z=1.,E=None, vectorfield=None, urf=None, tckur=N
     return(E_bound, u_bound, nrf, tck)
 ```
 
-2.  Testing
+### Testing
+
+Test the functions.
 
 ``` python
 numpoints=3200
@@ -311,11 +314,13 @@ rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpo
 E_bound,_,_,_ = get_energy_and_density(0,rr,vectorfield=vectorfield)
 ```
 
-3.  Main
+### Main
+
+Make figures.
 
 <div class="RESULTS drawer">
 
-![](file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-1.png)
+![](file:./Figs/Fig-1.png)
 
 </div>
 
@@ -418,7 +423,7 @@ x1,urf,tckur = solve_SLP(fn=nrf, tckfn=tck, t=rr, xlim=xlim, ylim=ylim, vectorfi
 
 <div class="RESULTS drawer">
 
-![](file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-2.png)
+![](file:./Figs/Fig-2.png)
 
 </div>
 
@@ -529,7 +534,7 @@ while cnt < 9 and abs(Ediff) > 1.E-4:
 
 <div class="RESULTS drawer">
 
-![](file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-4.png)
+![](file:./Figs/Fig-4.png)
 
 </div>
 
@@ -681,7 +686,7 @@ while cnt < 30 and abs(Ediff) > 1.E-4:
 
 <div class="RESULTS drawer">
 
-![](file:///home/chilkuri/Documents/codes/python/gscf/Fig-tmp5.png)
+![](file:./Fig-tmp5.png)
 
 </div>
 
@@ -689,7 +694,7 @@ while cnt < 30 and abs(Ediff) > 1.E-4:
 
 <div class="RESULTS drawer">
 
-![](file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-tmp6.png)
+![](file:./Figs/Fig-tmp6.png)
 
 </div>
 
@@ -697,6 +702,6 @@ while cnt < 30 and abs(Ediff) > 1.E-4:
 
 <div class="RESULTS drawer">
 
-![](file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-6.png)
+![](file:./Figs/Fig-6.png)
 
 </div>
