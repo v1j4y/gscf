@@ -1,7 +1,7 @@
 General Self-Consistency Procedure
 ====================================
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/v1j4y/gscf/master?urpath=lab?filepath=gscf.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://colab.research.google.com/github/v1j4y/gscf/blob/master/gscf.ipynb)
 
 This is a simple introduction to the resolution 
 of arbitrary 1D Hamiltonians using numerical methods.
