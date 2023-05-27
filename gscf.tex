@@ -1,130 +1,170 @@
-<div class="HEADER drawer">
+% Created 2023-05-27 sam. 22:20
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{mathpazo}
+\usepackage{color}
+\usepackage{enumerate}
+\usepackage{braket}
+\definecolor{bg}{rgb}{0.95,0.95,0.95}
+\tolerance=1000
+            \documentclass[fleqn]{article}
+\usepackage{amsmath,amssymb}
+\newcommand*\Laplace{\mathop{}\!\mathbin\bigtriangleup}
 
-</div>
+\linespread{1.1}
+\hypersetup{pdfborder=0 0 0}
+\author{Vijay Gopal Chilkuri}
+\date{\today}
+\title{General Self-Consistent Field Methods}
+\hypersetup{
+ pdfauthor={Vijay Gopal Chilkuri},
+ pdftitle={General Self-Consistent Field Methods},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 27.1 (Org mode 9.6)}, 
+ pdflang={English}}
+\begin{document}
 
-<div class="SETUP drawer">
+\maketitle
+\tableofcontents
 
-``` python
+
+\begin{verbatim}
 import numpy as np
 from scipy.integrate import odeint
 from scipy import integrate
 from scipy import interpolate
 from scipy.optimize import root_scalar
 import matplotlib.pyplot as plt
-```
+\end{verbatim}
 
-</div>
+\section{Introduction}
+\label{sec:org3667059}
 
-# Introduction
+The Schrodinger equation is a certain class of Boundary Value Problem (BVP).
+Solution of the Schrodinger equation results in the eigenvalues(\(\lambda\)) and
+eigenvectors (\(\psi\)) of the Hamiltonian.
 
-The Schrodinger equation is a certain class of Boundary Value Problem
-(BVP). Solution of the Schrodinger equation results in the
-eigenvalues($\lambda$) and eigenvectors ($\psi$) of the Hamiltonian.
-
-$$
+\[
 \mathcal{L}\psi(x) = \lambda\psi(x)
-$$
+\]
 
-These type of equations where $\mathcal{L}$ is a second order
-differential operator and self-adjoint (i.e. hermitian) is called a
-Sturm-Liouville problem (SLP). Sturm-Liouville problems are general
-eigenvalues problems of the form
+These type of equations where \(\mathcal{L}\) is a second order differential
+operator and self-adjoint (i.e. hermitian) is called a Sturm-Liouville problem (SLP).
+Sturm-Liouville problems are general eigenvalues problems of the form
 
-$$
+\[
 -\frac{d}{dt}\left ( p(t) \frac{d y(t)}{dt} \right ) + q(t)y(t) = \lambda g(t)y(t)
-$$
+\]
 
-posed on an interval $-\infty \le a \le b \le \infty$ which may be
-finite or infinite. Such problem's arise in various fields of physics
-and chemistry and there exist robust and well studied numerical and
-analytical methods for their resolution.
+posed on an interval \(-\infty \le a \le b \le \infty\) which may be finite or infinite. Such
+problem's arise in various fields of physics and chemistry and there exist
+robust and well studied numerical and analytical methods for their resolution.
 
-In the present manuscript, we shall document numerical methods for the
-solution of various types of Hamiltonians and analyze their spectra and
-wavefunctions.
+In the present manuscript, we shall document numerical methods for the solution
+of various types of Hamiltonians and analyze their spectra and wavefunctions.
 
-# Hydrogen atom
+\section{Hydrogen atom}
+\label{sec:org4f60c42}
+We begin with the most simplest SLP which is the solution
+of the Hamiltonian for the hydrogen atom Eq:\ref{Eq2}
 
-We begin with the most simplest SLP which is the solution of the
-Hamiltonian for the hydrogen atom Eq:<span class="spurious-link"
-target="Eq2">*Eq2*</span>
-
-$$
+\[
 \hat{H}\psi(\mathbf{x}) = \left [ -\frac{1}{2}\bigtriangleup + V \right ]\psi(\mathbf{x})
-$$
+\]
 
-This is the SLP(Eq:<span class="spurious-link"
-target="Eq1">*Eq1*</span>) with $p(t)=\frac{1}{2}$, and $g(t)=1$, and
-$q(t)=V$, the potential acting on the particle. The Eq:<span
-class="spurious-link" target="Eq2">*Eq2*</span> is in cartesian
-coordinates $\mathbf{x}$ and can be transformed to spherical coordinates
-via a coordinate transformation.
+This is the SLP(Eq:\ref{Eq1}) with \(p(t)=\frac{1}{2}\), and \(g(t)=1\), and \(q(t)=V\), the potential acting
+on the particle. The Eq:\ref{Eq2} is in cartesian coordinates \(\mathbf{x}\) and
+can be transformed to spherical coordinates via a coordinate transformation.
 
-$$
+\[
 x_1 = r\sin{\theta}\cos{\phi}
-$$ $$
+\]
+\[
 x_2 = r\sin{\theta}\sin{\phi}
-$$ $$
+\]
+\[
 x_3 = r\cos{\theta}
-$$
+\]
 
-In spherical coordinates, the operator $\hat{H}$ is transformed to
+In spherical coordinates, the operator \(\hat{H}\) is transformed to
 
-$$
+\[
 \hat{H} = -\frac{1}{2}\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial}{\partial r} \right)
-$$ $$
+\]
+\[
    -\frac{1}{r^2}\frac{1}{\sin{\theta}}\frac{\partial}{\partial\theta} \left(\sin{\theta}\frac{\partial}{\partial\theta} \right)
-$$ $$
+\]
+\[
    -\frac{1}{r^2}\frac{1}{\sin{\theta}^2}\frac{\partial^2}{\partial\phi^2} + V
-$$
+\]
 
 We can then separate the wavefunction to three independent variables
-$\psi(\mathbf{x})=R(r)\Theta(\theta)\Phi(\phi)$ to obtain three separate
-SLPs
+\(\psi(\mathbf{x})=R(r)\Theta(\theta)\Phi(\phi)\) to obtain three separate SLPs
 
-$$
+\[
 \left (
 -\frac{1}{2}\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial}{\partial r} \right) + \frac{l(l+1)}{r^2} + V(r) \right)R(r) = \lambda R(r)
-$$
+\]
 
-$$
+\[
 \frac{1}{\sin{\theta}}\left (-\frac{\partial}{\partial \theta} \left( \sin{\theta} \frac{\partial}{\partial \theta} \right)+ \frac{m^2}{\sin{\theta}} \right)\Theta(\theta) = l(l+1)
-$$ $$
+\]
+\[
 \Theta(\theta)-\frac{\partial^2}{\partial \phi^2}\Phi(\phi) = m^2 \Phi(\phi)
-$$
+\]
 
-With only $r$ being the dependent variable i.e. the first equation. Here
-we can do a further transformation of the dependent variable
-$u(r) = r R(r)$ which gives the SLP
+With only \(r\) being the dependent variable i.e. the first equation.
+Here we can do a further transformation of the dependent variable
+\(u(r) = r R(r)\) which gives the SLP
 
-$$
+\[
 -\frac{1}{2}\frac{\partial^2 u(r)}{\partial r^2}+ q(r) u(r) = \lambda u(r)
-$$ $$
+\]
+\[
 q(r) = \frac{l(l+1)}{r^2} + V(r)
-$$ $$
+\]
+\[
 p(r) = g(r) = 1
-$$
+\]
 
-These (Eq:<span class="spurious-link" target="Eq6">*Eq6*</span>) are the
-working equations.
+These (Eq:\ref{Eq6}) are the working equations.
 
-## Methodology
+\subsection{Methodology}
+\label{sec:org5cda928}
 
-First, we transfrom Eq:<span class="spurious-link"
-target="Eq6">*Eq6*</span> into a set of coupled linear ODEs
+First, we transfrom Eq:\ref{Eq6} into a set of coupled linear
+ODEs
 
-$$
+\[
 y = \begin{pmatrix} u \\ u' \end{pmatrix}
-$$ $$
+\]
+\[
 y' = \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ 2\left( \frac{l(l+1)}{r^2} -\frac{\mathcal{Z}}{r} - E \right) u \end{pmatrix}
-$$
+\]
 
-The boundary conditions are at $r=0$ and $r=\infty$ with $u(r)=0$ and
-$u(\infty)=0$.
+The boundary conditions are at \(r=0\) and \(r=\infty\) with
+\(u(r)=0\) and \(u(\infty)=0\).
 
-Vector Field
-
-``` python
+\begin{enumerate}
+\item Vector Field
+\label{sec:orgec1e4ec}
+\begin{verbatim}
 def vectorfield(w, t, p):
     """
     Defines the differential equations for the coupled spring-mass system.
@@ -145,11 +185,10 @@ def vectorfield(w, t, p):
          ]
 
     return f
-```
-
-Solution
-
-``` python
+\end{verbatim}
+\item Solution
+\label{sec:org6bd2d87}
+\begin{verbatim}
 def solve_SLP(fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None, e1=-0.5, l1=0, z=1., t=None, numpoints=1600, stoptime=15.0, xlim=0, ylim=-1.0E-6, vectorfield=None, isWF=True):
 
     if fn is None:
@@ -210,18 +249,20 @@ def solve_SLP(fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None,
     def fnout(x, tck):
         return interpolate.splev(x, tckfnout)
     return(x1,fnout,tckfnout)
-```
+\end{verbatim}
+\end{enumerate}
 
-### Shooting method
+\subsubsection{Shooting method}
+\label{sec:org66536a7}
 
-Here we start with $u(\infty)=0$ and integrate towards $r=0$. This is
-more stable for the convergence with respect to the Hydrogen atom.
+Here we start with \(u(\infty)=0\) and integrate towards
+\(r=0\). This is more stable for the convergence with
+respect to the Hydrogen atom.
 
-### Code
-
+\subsubsection{Code}
+\label{sec:org26eb34b}
 Main function that does the shooting.
-
-``` python
+\begin{verbatim}
 def shoot(E, t, l=0, z=1., fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None, xlim=0, ylim=-1.E-6, vectorfield=None, isWF=True):
    if vectorfield is None:
       print("[shoot] Error: Have to supply a vectorfield")
@@ -231,13 +272,12 @@ def shoot(E, t, l=0, z=1., fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None,
 
    # Extrapolate u to the origin r=0.
    return u[0] - t[0] * (u[1] - u[0])/(t[1] - t[0]), u, fnout, tckfnout
-```
+\end{verbatim}
 
-### Testing
-
+\subsubsection{Testing}
+\label{sec:org24ea0f6}
 Test the function.
-
-``` python
+\begin{verbatim}
 rr = np.logspace(-6, 5, 500)
 numpoints=400
 stoptime=15.0
@@ -247,41 +287,37 @@ u0s = [
     shoot(EE[0], rr, l=0, vectorfield=vectorfield)[0] for E in EE
 ]
 
-```
-
-### Plot
-
+\end{verbatim}
+\subsubsection{Plot}
+\label{sec:org953b6bb}
 Plot to check results.
+\begin{center}
+\includegraphics[width=.9\linewidth]{/home/chilkuri/Documents/codes/python/gscf/Fig-tmp.png}
+\end{center}
 
-<div class="RESULTS drawer">
-
-![](file:///home/chilkuri/Documents/codes/python/gscf/Fig-tmp.png)
-
-</div>
-
-### Plots
-
-### Main
-
+\subsubsection{Plots}
+\label{sec:org12bf04b}
+\subsubsection{Main}
+\label{sec:orgee794dc}
 Make some figures.
+\begin{center}
+\includegraphics[width=.9\linewidth]{/home/chilkuri/Documents/codes/python/gscf/Fig-1.png}
+\end{center}
 
-<div class="RESULTS drawer">
+\subsubsection{Solution of the SLP}
+\label{sec:org8681974}
 
-![](file:///home/chilkuri/Documents/codes/python/gscf/Fig-1.png)
+Here we have to search for the value of \(E\)
+for which the BVP has the final conditions satisfied
+i.e. \(u(r)=0\). This is done using the optimization
+routine from \texttt{scipy}.
 
-</div>
-
-### Solution of the SLP
-
-Here we have to search for the value of $E$ for which the BVP has the
-final conditions satisfied i.e. $u(r)=0$. This is done using the
-optimization routine from `scipy`.
-
-### Code
+\subsubsection{Code}
+\label{sec:org0e3ad7a}
 
 The code is as follows
 
-``` python
+\begin{verbatim}
 def get_energy_and_density(l,rr,z=1.,E=None, vectorfield=None, urf=None, tckur=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None, xlim=0., ylim=-1.0E-6, isWF=True):
     dE = 0.51 # scan resolution to look for sign changes
     if E is None:
@@ -301,91 +337,94 @@ def get_energy_and_density(l,rr,z=1.,E=None, vectorfield=None, urf=None, tckur=N
     E_bound = root_scalar(fn, x0=E-dE, x1=E+dE).root
     _,u_bound,nrf,tck = shoot(E_bound, rr, l=l, z=z, fn=urf, fnx=fnx, tckfnx=tckfnx, fnc=fnc, tckfnc=tckfnc, tckfn=tckur, vectorfield=vectorfield, xlim=xlim, ylim=ylim, isWF=isWF)
     return(E_bound, u_bound, nrf, tck)
-```
-
-### Testing
-
+\end{verbatim}
+\subsubsection{Testing}
+\label{sec:org1b51349}
 Test the functions.
-
-``` python
+\begin{verbatim}
 numpoints=3200
 stoptime=60.0
 rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
 E_bound,_,_,_ = get_energy_and_density(0,rr,vectorfield=vectorfield)
-```
-
-### Main
-
+\end{verbatim}
+\subsubsection{Main}
+\label{sec:org66fab06}
 Make figures.
 
-<div class="RESULTS drawer">
-
-![](file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-1.png)
-
-</div>
-
-# Helium atom
-
-Here we need to include the Hartree potential $V_H$ which is the
+\section{Helium atom}
+\label{sec:org219ad1a}
+Here we need to include the Hartree potential \(V_H\) which is the
 repulsion between the two electrons
 
-$$
+\[
 V_H(\mathbf{r}) = \int dr'^3 n(\mathbf{r}')\frac{1}{\mathbf{r}-\mathbf{r}'}
-$$
+\]
 
-Where the $n(\mathbf{r})$ is the density which is given as
+Where the \(n(\mathbf{r})\) is the density which is given as
 
-$$
+\[
 n(\mathbf{r}) = 2\sum_i^{N_{occ}} |\psi(\mathbf{r})|^2
-$$
+\]
 
-where we assume a closed shell spin singlet slater determinant. In order
-to get the radial part of the density, we can use the radial part of the
-wavefunction $\psi(\mathbf{r})$ which is $R(\mathbf{r})$.
+where we assume a closed shell spin singlet slater determinant.
+In order to get the radial part of the density, we can use the
+radial part of the wavefunction \(\psi(\mathbf{r})\) which is \(R(\mathbf{r})\).
 
-## Poisson equation
+\begin{align*}
+n(r) &= 2\sum_i^{N_{occ}} |R(r)|^2 \\
+n(r) &= 2\sum_i^{N_{occ}} \left |\frac{u(r)}{r}\right|^2 \\
+\end{align*}
 
-In order to calculate the Hartree potential Eq:<span
-class="spurious-link" target="Eq8">*Eq8*</span>, we shall transform it
-into an SLP which we can again solve using the above methodology the
-solution of the Hydrogen atom.
 
-$$
+\subsection{Poisson equation}
+\label{sec:org56b7f3a}
+
+In order to calculate the Hartree potential Eq:\ref{Eq8}, we shall
+transform it into an SLP which we can again solve using the
+above methodology the solution of the Hydrogen atom.
+
+\[
 \nabla^2 V_H(\mathbf{r}) = -4 \pi n(\mathbf{r})
-$$
+\]
 
 This can again be transformed using the variable substitution
-$u(r)=rR(r)$ to a 1D equation.
+\(u(r)=rR(r)\) to a 1D equation.
 
-$$
+\[
 \frac{\partial^2 U(r)}{\partial r} = -4\pi r n(r)
-$$
+\]
 
-The fact that $n(r)$ is simply $R(r)^2$ by definition and the fact that
-$u(r)$ is normalized we can drop off $4\pi$ to finally obtain
+The fact that \(n(r)\) is simply \(R(r)^2\) by definition and the
+fact that \(u(r)\) is normalized we can drop off \(4\pi\) to finally
+obtain
 
-$$
+\[
 U''(r) = -\frac{u(r)^2}{r}
-$$
+\]
 
-This is the SLP that we need to solve to obtain the hartree potential
-$V_H(r)$.
+This is the SLP that we need to solve to obtain the
+hartree potential \(V_H(r)\).
 
-## Solution
+\subsection{Solution}
+\label{sec:org3f249d0}
 
-The BVP Eq:<span class="spurious-link" target="Eq11">*Eq11*</span> takes
-the following boundary conditions
+The BVP Eq:\ref{Eq11} takes the following boundary conditions
 
-where, $q_{max}$ is the total charge. We shall use these conditions in
-the shooting method to find the correct Hartree potential.
+\begin{align*}
+U(0) &= 0\\
+U(r_{max}) &= q_{max}
+\end{align*}
 
-$$
+where, \(q_{max}\) is the total charge. We shall use these conditions
+in the shooting method to find the correct Hartree potential.
+
+\[
 q_{max} = \int_0^{max} \text{d}r\ u^2(r)
-$$
+\]
 
-### Vector Field
-
-``` python
+\subsubsection{Vector Field}
+\label{sec:orgdaf50c6}
+\begin{verbatim}
 def vectorfieldVH(w, t, p):
     """
     Defines the differential equations for the coupled spring-mass system.
@@ -405,11 +444,10 @@ def vectorfieldVH(w, t, p):
          -nrf(t,tck)*nrf(t,tck)/t
          ]
     return f
-```
-
-### Testing
-
-``` python
+\end{verbatim}
+\subsubsection{Testing}
+\label{sec:orgd858ea1}
+\begin{verbatim}
 numpoints=400
 stoptime=15.0
 rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
@@ -417,31 +455,30 @@ qmax = 1.
 xlim = qmax
 ylim = 0
 x1,urf,tckur = solve_SLP(fn=nrf, tckfn=tck, t=rr, xlim=xlim, ylim=ylim, vectorfield=vectorfieldVH)
-```
+\end{verbatim}
+\subsubsection{Main}
+\label{sec:org51caa7e}
+\begin{center}
+\includegraphics[width=.9\linewidth]{/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-2.png}
+\end{center}
 
-### Main
+\subsection{Self-consistent field cycle}
+\label{sec:org07cac0b}
 
-<div class="RESULTS drawer">
+In order to find the solution, we need to perform a SCF loop
+so that the energy stays constant.
 
-![](file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-2.png)
+In order to calculate the total energy, we now also need to
+incorporate the Hartee potential
 
-</div>
-
-## Self-consistent field cycle
-
-In order to find the solution, we need to perform a SCF loop so that the
-energy stays constant.
-
-In order to calculate the total energy, we now also need to incorporate
-the Hartee potential
-
-$$
+\[
 E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
-$$
+\]
 
-### Vector Field
 
-``` python
+\subsubsection{Vector Field}
+\label{sec:org607ff8f}
+\begin{verbatim}
 def vectorfieldHe(w, t, p):
     """
     Defines the differential equations for the coupled spring-mass system.
@@ -462,11 +499,10 @@ def vectorfieldHe(w, t, p):
          ]
 
     return f
-```
-
-### Calculate energy
-
-``` python
+\end{verbatim}
+\subsubsection{Calculate energy}
+\label{sec:org5d50c29}
+\begin{verbatim}
 def calcEnergy(ei,urf,tckur,nrf,tck,t=None,stoptime=60.0,numpoints=3200):
     E = 2*ei
     if t is None:
@@ -478,11 +514,10 @@ def calcEnergy(ei,urf,tckur,nrf,tck,t=None,stoptime=60.0,numpoints=3200):
     print(eH)
     E = E - eH
     return(E)
-```
-
-### SCF cycle code
-
-``` python
+\end{verbatim}
+\subsubsection{SCF cycle code}
+\label{sec:org9f3270c}
+\begin{verbatim}
 
 stoptime=60.0
 numpoints=3200
@@ -520,82 +555,82 @@ while cnt < 9 and abs(Ediff) > 1.E-4:
     E0 = E1
 
     cnt += 1
-```
+\end{verbatim}
+\subsubsection{Main}
+\label{sec:org05b6a3d}
 
-### Main
+\subsection{Figure}
+\label{sec:org4aa9fe3}
+\begin{center}
+\includegraphics[width=.9\linewidth]{/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-4.png}
+\end{center}
 
-<div class="RESULTS drawer">
+\subsection{The local density Exchange potential}
+\label{sec:org9d23a8d}
 
-/tmp/babel-DzBZdg/python-LzHa4M
+The Hartree potential used above is not the full potential since
+we have substracted half of the electron density to take into
+account the self-energy correction. However, if we take the
+actual Hartree potential into account, the energy obtained is
+very far from the exact energy.
 
-</div>
+In order to correct for this self interaction energy, we can use
+the local density exchange potential (LDA). A simple functional
+based on the electron gas is given as
 
-## Figure
-
-<div class="RESULTS drawer">
-
-![](file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-4.png)
-
-</div>
-
-## The local density Exchange potential
-
-The Hartree potential used above is not the full potential since we have
-substracted half of the electron density to take into account the
-self-energy correction. However, if we take the actual Hartree potential
-into account, the energy obtained is very far from the exact energy.
-
-In order to correct for this self interaction energy, we can use the
-local density exchange potential (LDA). A simple functional based on the
-electron gas is given as
-
-$$
+\[
 V_{\text{x}}(\mathbf{r}) = -\left( \frac{3}{\pi} \right )^{1/3} \times n^{1/3}(\mathbf{r})
-$$
+\]
 
-This potential is defined as the partial derivative of the exchange
-energy
 
-$$
+This potential is defined as the partial derivative of the exchange energy
+
+\[
 V_{\text{x}}[n](\mathbf{r}) = \frac{\partial}{\partial n (\mathbf{r})}E_{x}[n]
-$$
+\]
 
 And the exchange energy is given as
 
-$$
+\[
 E_{x}[n] = \int \text{d}^3 r \epsilon_{x}[n(\mathbf{r})]n(\mathbf{r})
-$$
+\]
 
 where the exchange energy density is given as
 
-$$
+\[
 \epsilon_{x}[n(\mathbf{r})] = -(3/4)(3/\pi)^{1/3} \times n^{1/3}(\mathbf{r})
-$$
+\]
 
-The local density exchange potential is derived from this local energy
-density expression.
+The local density exchange potential is derived from this local
+energy density expression.
 
-This local density based potential can correct for part of the
-self-energy error in the Hartree potential. Note that here, and for the
-calculation for the Hartree potential, the full density is to be taken.
-We can again write this in terms of the radial function as
+This local density based potential can correct for part of the self-energy error
+in the Hartree potential. Note that here, and for the calculation for the
+Hartree potential, the full density is to be taken. We can again
+write this in terms of the radial function as
 
-$$
+\[
 V_{\text{x}}(\mathbf{r}) = -\left[ \frac{3u^2(r)}{2\pi^2r^2} \right ]^{1/3}
-$$
+\]
 
 and, using the above exchange energy, the total energy can then be
 written as
 
-$$
+\[
 E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r) + \frac{1}{2}\int \text{d}r\ V_{\text{x}}(r)u^2(r)
-$$
+\]
 
 The full equation the reads
 
-### Vector Field
+\begin{align*}
+\label{Eq16}
+y &= \begin{pmatrix} u \\ u' \end{pmatrix}\\
+y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ 2\left( \frac{l(l+1)}{r^2} -\frac{\mathcal{Z}}{r} + V_H + V_{\text{x}} - E \right) u \end{pmatrix}\\
+\end{align*}
 
-``` python
+\subsubsection{Vector Field}
+\label{sec:org8216bed}
+\begin{verbatim}
 def vectorfieldX(w, t, p):
     """
     Defines the differential equations for the coupled spring-mass system.
@@ -616,11 +651,10 @@ def vectorfieldX(w, t, p):
          ]
 
     return f
-```
-
-### Calculate energy
-
-``` python
+\end{verbatim}
+\subsubsection{Calculate energy}
+\label{sec:orge0f3a58}
+\begin{verbatim}
 def calcEnergyVx(ei,urf,tckur,urxf,tckurx,nrf,tck,t=None,stoptime=60.0,numpoints=3200):
     E = 2*ei
     if t is None:
@@ -633,11 +667,10 @@ def calcEnergyVx(ei,urf,tckur,urxf,tckurx,nrf,tck,t=None,stoptime=60.0,numpoints
     print((eH, (ex/2)))
     E = E - eH + (ex/2)
     return(E)
-```
-
-### SCF cycle code
-
-``` python
+\end{verbatim}
+\subsubsection{SCF cycle code}
+\label{sec:org47ac654}
+\begin{verbatim}
 
 stoptime=60.0
 numpoints=3200
@@ -680,28 +713,19 @@ while cnt < 30 and abs(Ediff) > 1.E-4:
     E0 = E1
 
     cnt += 1
-```
+\end{verbatim}
+\subsubsection{Main Shoot}
+\label{sec:org601e5a0}
+\begin{center}
+\includegraphics[width=.9\linewidth]{/home/chilkuri/Documents/codes/python/gscf/Fig-tmp5.png}
+\end{center}
 
-### Main Shoot
+\subsubsection{Main}
+\label{sec:org461cfc3}
 
-<div class="RESULTS drawer">
-
-![](file:///home/chilkuri/Documents/codes/python/gscf/Fig-tmp5.png)
-
-</div>
-
-### Main
-
-<div class="RESULTS drawer">
-
-![](file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-tmp6.png)
-
-</div>
-
-## Figure
-
-<div class="RESULTS drawer">
-
-![](file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-6.png)
-
-</div>
+\subsection{Figure}
+\label{sec:orge35b1a7}
+\begin{center}
+\includegraphics[width=.9\linewidth]{/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-6.png}
+\end{center}
+\end{document}
