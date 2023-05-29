@@ -21,5 +21,6 @@ jobs:
       run: echo "GITHUB_SHA_SHORT=$(echo PYTHONPATH=home/runner/work/:home/runner/work/gscf/:$PYTHONPATH)" >> $GITHUB_ENV
     - name: Test with pytest
       run: |
+        pip install .
         pytest
 
