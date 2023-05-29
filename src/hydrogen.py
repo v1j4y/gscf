@@ -1,3 +1,5 @@
+from src.imports_all import *
+
 def vectorfield(w, t, p):
     """
     Defines the differential equations for the coupled spring-mass system.
@@ -167,11 +169,6 @@ def get_energy_and_density(l,rr,z=1.,E=None, vectorfield=None, urf=None, tckur=N
     E_bound = root_scalar(fn, x0=E-dE, x1=E+dE).root
     _,u_bound,nrf,tck = shoot(E_bound, rr, l=l, z=z, fn=urf, fnx=fnx, tckfnx=tckfnx, fnc=fnc, tckfnc=tckfnc, tckfn=tckur, vectorfield=vectorfield, xlim=xlim, ylim=ylim, isWF=isWF)
     return(E_bound, u_bound, nrf, tck)
-
-numpoints=3200
-stoptime=60.0
-rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
-E_bound,_,_,_ = get_energy_and_density(0,rr,vectorfield=vectorfield)
 
 path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-1.png"
 

@@ -11,13 +11,14 @@
 
 * Setup :noexport:
 :SETUP:
-#+begin_src python :session p1 :results silent
+#+begin_src python :session p1 :results silent :tangle src/imports_all.py
 import numpy as np
 from scipy.integrate import odeint
 from scipy import integrate
 from scipy import interpolate
 from scipy.optimize import root_scalar
 import matplotlib.pyplot as plt
+from copy import deepcopy
 #+end_src
 :END:
 
@@ -144,6 +145,8 @@ $u(r)=0$ and $u(\infty)=0$.
 
 **** Vector Field
 #+begin_src python :results silent
+from src.imports_all import *
+
 def vectorfield(w, t, p):
     """
     Defines the differential equations for the coupled spring-mass system.
@@ -289,7 +292,6 @@ plt.savefig(path)
 [[/home/chilkuri/Documents/codes/python/gscf/Fig-tmp.png]]
 :end:
 
-*** Plots
 *** Plotting stuff :noexport:
 #+NAME: dressPath
 #+BEGIN_SRC python :session p1 :noweb
@@ -363,11 +365,15 @@ def get_energy_and_density(l,rr,z=1.,E=None, vectorfield=None, urf=None, tckur=N
 #+end_src
 *** Testing
 Test the functions.
-#+begin_src python :results silent
-numpoints=3200
-stoptime=60.0
-rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
-E_bound,_,_,_ = get_energy_and_density(0,rr,vectorfield=vectorfield)
+#+begin_src python :results silent :tangle src/test_hydrogen.py
+import numpy as np
+
+from src.hydrogen import get_energy_and_density, vectorfield
+
+def test_hydrogen(numpoints=3200, stoptime=60):
+    rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
+    E_bound,_,_,_ = get_energy_and_density(0,rr,vectorfield=vectorfield)
+    abs(E_bound - 0.5) <= 1.0E-10
 #+end_src
 *** Main
 Make figures.
@@ -403,7 +409,7 @@ plt.savefig(path)
 
 * Helium atom
 :PROPERTIES:
-:header-args:python: :async :session p1 :tangle helium.py
+:header-args:python: :async :session p1 :tangle src/helium.py
 :END:
 
 Here we need to include the Hartree potential $V_H$ which is the
@@ -479,6 +485,8 @@ q_{max} = \int_0^{max} \text{d}r\ u^2(r)
 
 *** Vector Field
 #+begin_src python :results silent
+from src.imports_all import *
+
 def vectorfieldVH(w, t, p):
     """
     Defines the differential equations for the coupled spring-mass system.
