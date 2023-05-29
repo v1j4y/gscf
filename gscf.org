@@ -23,6 +23,9 @@ import matplotlib.pyplot as plt
 
 
 * Introduction
+:PROPERTIES:
+:header-args:python: :tangle src/hydrogen.py
+:END:
 
 The Schrodinger equation is a certain class of Boundary Value Problem (BVP).
 Solution of the Schrodinger equation results in the eigenvalues($\lambda$) and
@@ -50,7 +53,7 @@ of various types of Hamiltonians and analyze their spectra and wavefunctions.
 
 * Hydrogen atom
 :PROPERTIES:
-:header-args:python: :async :session p1
+:header-args:python: :async :session p1 :tangle src/hydrogen.py
 :END:
 
 
@@ -400,7 +403,7 @@ plt.savefig(path)
 
 * Helium atom
 :PROPERTIES:
-:header-args:python: :async :session p1
+:header-args:python: :async :session p1 :tangle helium.py
 :END:
 
 Here we need to include the Hartree potential $V_H$ which is the
