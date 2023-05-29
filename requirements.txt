@@ -18,3 +18,4 @@ numpy==1.23.5
     #   seaborn
 scipy==1.10.0
     # via seaborn
+pytest==7.3.1
