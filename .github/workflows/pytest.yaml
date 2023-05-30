@@ -24,25 +24,3 @@ jobs:
       run: |
         pip install .
         python -m pytest --import-mode=append src/
-    
-    - name: install extra repository
-      run: sudo add-apt-repository ppa:kelleyk/emacs
-    
-    - name: refresh apt
-      run: sudo apt-get update
-    
-    - name: install dependencies
-      run: sudo apt-get install emacs
-    
-    - name: install htmlize
-      run: git clone https://github.com/hniksic/emacs-htmlize && cp emacs-htmlize/htmlize.el docs/
-    
-    - name: make
-      run: cd docs ; ./create.sh ../gscf.org ; cd ..
-    
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs
-
