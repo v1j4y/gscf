@@ -1,4 +1,10 @@
-from src.imports_all import *
+import numpy as np
+from scipy.integrate import odeint
+from scipy import integrate
+from scipy import interpolate
+from scipy.optimize import root_scalar
+import matplotlib.pyplot as plt
+from copy import deepcopy
 
 def vectorfield(w, t, p):
     """
