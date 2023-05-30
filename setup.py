@@ -28,7 +28,7 @@ setup(
     include_package_data=True,
     keywords='gscf',
     name='gscf',
-    packages=find_packages(include=['gscf', 'gscf.*']),
+    packages=find_packages(include=['gscf', 'gscf.*', 'gscf.src.*']),
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/v1j4y/gscf',
