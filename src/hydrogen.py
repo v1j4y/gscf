@@ -97,3 +97,23 @@ def shoot(E, t, l=0, z=1., fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None,
 
    # Extrapolate u to the origin r=0.
    return u[0] - t[0] * (u[1] - u[0])/(t[1] - t[0]), u, fnout, tckfnout
+
+def get_energy_and_density(l,rr,z=1.,E=None, vectorfield=None, urf=None, tckur=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None, xlim=0., ylim=-1.0E-6, isWF=True):
+    dE = 0.51 # scan resolution to look for sign changes
+    if E is None:
+        E = -1.0 # starting energy
+
+    if vectorfield is None:
+        print("[get_energy_and_density] Error have to supply a vectorfield")
+        return(0)
+
+    if urf is None:
+        def urf(x,tckur):
+            return(0)
+
+    def fn(e):
+        u0s = shoot(e, rr, l=l, z=z, fn=urf, tckfn=tckur, fnx=fnx, tckfnx=tckfnx, fnc=fnc, tckfnc=tckfnc, vectorfield=vectorfield, xlim=xlim, ylim=ylim, isWF=isWF)[0]
+        return(u0s)
+    E_bound = root_scalar(fn, x0=E-dE, x1=E+dE).root
+    _,u_bound,nrf,tck = shoot(E_bound, rr, l=l, z=z, fn=urf, fnx=fnx, tckfnx=tckfnx, fnc=fnc, tckfnc=tckfnc, tckfn=tckur, vectorfield=vectorfield, xlim=xlim, ylim=ylim, isWF=isWF)
+    return(E_bound, u_bound, nrf, tck)

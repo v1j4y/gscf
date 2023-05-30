@@ -25,7 +25,7 @@ from copy import deepcopy
 
 * Introduction
 :PROPERTIES:
-:header-args:python: :tangle src/hydrogen.py
+:header-args:python:
 :END:
 
 The Schrodinger equation is a certain class of Boundary Value Problem (BVP).
@@ -54,7 +54,7 @@ of various types of Hamiltonians and analyze their spectra and wavefunctions.
 
 * Hydrogen atom
 :PROPERTIES:
-:header-args:python: :async :session p1 :tangle src/hydrogen.py
+:header-args:python: :async :session p1
 :END:
 
 
@@ -144,7 +144,7 @@ The boundary conditions are at $r=0$ and $r=\infty$ with
 $u(r)=0$ and $u(\infty)=0$.
 
 **** Vector Field
-#+begin_src python :results silent
+#+begin_src python :results silent :tangle src/hydrogen.py
 from imports_all import *
 
 def vectorfield(w, t, p):
@@ -169,7 +169,7 @@ def vectorfield(w, t, p):
     return f
 #+end_src
 **** Solution
-#+begin_src python :results silent
+#+begin_src python :results silent :tangle src/hydrogen.py
 def solve_SLP(fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None, e1=-0.5, l1=0, z=1., t=None, numpoints=1600, stoptime=15.0, xlim=0, ylim=-1.0E-6, vectorfield=None, isWF=True):
 
     if fn is None:
@@ -240,7 +240,7 @@ respect to the Hydrogen atom.
 
 *** Code
 Main function that does the shooting.
-#+begin_src python :results silent
+#+begin_src python :results silent :tangle src/hydrogen.py
 def shoot(E, t, l=0, z=1., fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None, xlim=0, ylim=-1.E-6, vectorfield=None, isWF=True):
    if vectorfield is None:
       print("[shoot] Error: Have to supply a vectorfield")
@@ -342,7 +342,7 @@ routine from ~scipy~.
 
 The code is as follows
 
-#+begin_src python :results silent
+#+begin_src python :results silent :tangle src/hydrogen.py
 def get_energy_and_density(l,rr,z=1.,E=None, vectorfield=None, urf=None, tckur=None, fnx=None, tckfnx=None, fnc=None, tckfnc=None, xlim=0., ylim=-1.0E-6, isWF=True):
     dE = 0.51 # scan resolution to look for sign changes
     if E is None:
@@ -414,7 +414,7 @@ plt.savefig(path)
 
 * Helium atom
 :PROPERTIES:
-:header-args:python: :async :session p1 :tangle src/helium.py
+:header-args:python: :async :session p1
 :END:
 
 Here we need to include the Hartree potential $V_H$ which is the
@@ -489,7 +489,7 @@ q_{max} = \int_0^{max} \text{d}r\ u^2(r)
 \]
 
 *** Vector Field
-#+begin_src python :results silent
+#+begin_src python :results silent :tangle src/helium.py
 from imports_all import *
 
 def vectorfieldVH(w, t, p):
@@ -567,7 +567,7 @@ E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
 
 
 *** Vector Field
-#+begin_src python :results silent
+#+begin_src python :results silent :tangle src/helium.py
 def vectorfieldHe(w, t, p):
     """
     Defines the differential equations for the coupled spring-mass system.
@@ -590,7 +590,7 @@ def vectorfieldHe(w, t, p):
     return f
 #+end_src
 *** Calculate energy
-#+begin_src python :results silent
+#+begin_src python :results silent :tangle src/helium.py
 def calcEnergy(ei,urf,tckur,nrf,tck,t=None,stoptime=60.0,numpoints=3200):
     E = 2*ei
     if t is None:
@@ -775,7 +775,7 @@ y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ 2\left( \f
 \end{align*}
 
 *** Vector Field
-#+begin_src python :results silent
+#+begin_src python :results silent :tangle src/helium.py
 def vectorfieldX(w, t, p):
     """
     Defines the differential equations for the coupled spring-mass system.
@@ -798,7 +798,7 @@ def vectorfieldX(w, t, p):
     return f
 #+end_src
 *** Calculate energy
-#+begin_src python :results silent
+#+begin_src python :results silent :tangle src/helium.py
 def calcEnergyVx(ei,urf,tckur,urxf,tckurx,nrf,tck,t=None,stoptime=60.0,numpoints=3200):
     E = 2*ei
     if t is None:

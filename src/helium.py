@@ -92,9 +92,3 @@ def calcEnergyVx(ei,urf,tckur,urxf,tckurx,nrf,tck,t=None,stoptime=60.0,numpoints
     print((eH, (ex/2)))
     E = E - eH + (ex/2)
     return(E)
-
-def urxf(x,nrf,tck):
-    numer = 3.*nrf(x,tck)*nrf(x,tck)
-    denom = 2.*np.pi*np.pi*x*x
-    return(-np.power(numer/denom,1/3))
-
