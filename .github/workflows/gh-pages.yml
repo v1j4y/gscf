@@ -21,12 +21,18 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+
 jobs:
   # Build job
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Install SSH Client 
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+
+      - uses: actions/checkout@v3
 
       - name: install extra repository
         run: sudo add-apt-repository ppa:kelleyk/emacs
