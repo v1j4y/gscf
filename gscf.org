@@ -145,7 +145,7 @@ $u(r)=0$ and $u(\infty)=0$.
 
 **** Vector Field
 #+begin_src python :results silent
-from src.imports_all import *
+from imports_all import *
 
 def vectorfield(w, t, p):
     """
@@ -490,7 +490,7 @@ q_{max} = \int_0^{max} \text{d}r\ u^2(r)
 
 *** Vector Field
 #+begin_src python :results silent
-from src.imports_all import *
+from imports_all import *
 
 def vectorfieldVH(w, t, p):
     """

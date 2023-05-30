@@ -5,7 +5,7 @@ sys.path.append('/home/runner/work/gscf/gscf')
 
 import numpy as np
 
-from hydrogen import get_energy_and_density, vectorfield
+from src.hydrogen import get_energy_and_density, vectorfield
 
 
 def test_hydrogen(numpoints=3200, stoptime=60):
