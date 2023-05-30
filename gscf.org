@@ -366,6 +366,11 @@ def get_energy_and_density(l,rr,z=1.,E=None, vectorfield=None, urf=None, tckur=N
 *** Testing
 Test the functions.
 #+begin_src python :results silent :tangle src/test_hydrogen.py
+import sys
+# the mock-0.3.1 dir contains testcase.py, testutils.py & mock.py
+sys.path.append('/home/runner/work/gscf/gscf/src')
+sys.path.append('/home/runner/work/gscf/gscf')
+
 import numpy as np
 
 from src.hydrogen import get_energy_and_density, vectorfield
