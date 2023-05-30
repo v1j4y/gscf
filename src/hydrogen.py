@@ -1,4 +1,4 @@
-from gscf.src.imports_all import *
+from src.imports_all import *
 
 def vectorfield(w, t, p):
     """
