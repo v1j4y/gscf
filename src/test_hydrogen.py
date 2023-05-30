@@ -1,6 +1,6 @@
 import numpy as np
 
-from gscf.src.hydrogen import get_energy_and_density, vectorfield
+from src.hydrogen import get_energy_and_density, vectorfield
 
 def test_hydrogen(numpoints=3200, stoptime=60):
     rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
