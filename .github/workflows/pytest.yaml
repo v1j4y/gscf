@@ -24,3 +24,4 @@ jobs:
       run: |
         pip install .
         python -m pytest --import-mode=append src/
+
