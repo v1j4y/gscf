@@ -1,4 +1,4 @@
-from src.imports_all import *
+from imports_all import *
 
 def vectorfieldVH(w, t, p):
     """
