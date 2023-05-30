@@ -8,7 +8,7 @@ else
     emacs --batch --load ../docs/config.el $INPUT -f org-html-export-to-html
 fi
 
-mv ../src/gscf.html index.html
+mv ../gscf.html index.html
 
 
 
