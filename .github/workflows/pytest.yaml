@@ -18,9 +18,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Set env
-      run: echo "GITHUB_SHA_SHORT=$(echo PYTHONPATH=home/runner/work/:home/runner/work/gscf/:$PYTHONPATH)" >> $GITHUB_ENV
+      run: echo "GITHUB_SHA_SHORT=$(echo PYTHONPATH=home/runner/work/:home/runner/work/gscf/gscf:$PYTHONPATH)" >> $GITHUB_ENV
     - name: Test with pytest
       run: |
+        pwd
+        echo $PWD
         pip install .
         pytest
 
