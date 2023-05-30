@@ -15,3 +15,6 @@ Hamiltonian for the following atoms
 Focus is on simplicity and readability.
 
 To see the source code and read the documentation head [here](gscf.md)
+
+[website](https://v1j4y.github.io/gscf)
+
