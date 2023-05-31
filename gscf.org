@@ -11,7 +11,8 @@
 
 * Setup :noexport:
 :SETUP:
-#+begin_src python :session p1 :results silent :tangle src/imports_all.py
+#+NAME: importall
+#+begin_src python :session p1 :results silent :noweb yes
 import numpy as np
 from scipy.integrate import odeint
 from scipy import integrate
@@ -144,8 +145,8 @@ The boundary conditions are at $r=0$ and $r=\infty$ with
 $u(r)=0$ and $u(\infty)=0$.
 
 **** Vector Field
-#+begin_src python :results silent :tangle src/hydrogen.py
-from imports_all import *
+#+begin_src python :results silent :tangle src/hydrogen.py :noweb yes
+<<importall>>
 
 def vectorfield(w, t, p):
     """
@@ -268,7 +269,7 @@ u0s = [
 *** Plot
 Plot to check results.
 #+begin_src python :results drawer :exports results :noweb yes
-path = "/home/chilkuri/Documents/codes/python/gscf/Fig-tmp.png"
+path = "./Figs/Fig-1.png"
 
 plt.clf()
 fig, ax = plt.subplots()
@@ -289,7 +290,7 @@ plt.savefig(path)
 
 #+RESULTS:
 :results:
-[[/home/chilkuri/Documents/codes/python/gscf/Fig-tmp.png]]
+[[./Figs/Fig-1.png]]
 :end:
 
 *** Plotting stuff :noexport:
@@ -304,7 +305,7 @@ plt.savefig(path)
 *** Main
 Make some figures.
 #+begin_src python :results drawer :exports results :noweb yes
-path = "/home/chilkuri/Documents/codes/python/gscf/Fig-1.png"
+path = "./Figs/Fig-2.png"
 
 plt.clf()
 fig, ax = plt.subplots()
@@ -328,7 +329,7 @@ plt.savefig(path)
 
 #+RESULTS:
 :results:
-[[/home/chilkuri/Documents/codes/python/gscf/Fig-1.png]]
+[[./Figs/Fig-2.png]]
 :end:
 
 *** Solution of the SLP
@@ -383,7 +384,7 @@ def test_hydrogen(numpoints=3200, stoptime=60):
 *** Main
 Make figures.
 #+begin_src python :results drawer :exports results :noweb yes
-path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-1.png"
+path = "./Figs/Fig-3.png"
 
 plt.clf()
 fig, ax = plt.subplots()
@@ -409,7 +410,7 @@ plt.savefig(path)
 
 #+RESULTS:
 :results:
-[[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-1.png]]
+[[./Figs/Fig-3.png]]
 :end:
 
 * Helium atom
@@ -489,8 +490,8 @@ q_{max} = \int_0^{max} \text{d}r\ u^2(r)
 \]
 
 *** Vector Field
-#+begin_src python :results silent :tangle src/helium.py
-from imports_all import *
+#+begin_src python :results silent :tangle src/helium.py :noweb yes
+<<importall>>
 
 def vectorfieldVH(w, t, p):
     """
@@ -524,7 +525,7 @@ x1,urf,tckur = solve_SLP(fn=nrf, tckfn=tck, t=rr, xlim=xlim, ylim=ylim, vectorfi
 #+end_src
 *** Main
 #+begin_src python :results drawer :exports results :noweb yes
-path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-2.png"
+path = "./Figs/Fig-4.png"
 
 plt.clf()
 fig, ax = plt.subplots()
@@ -549,7 +550,7 @@ plt.savefig(path)
 
 #+RESULTS:
 :results:
-[[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-2.png]]
+[[./Figs/Fig-4.png]]
 :end:
 
 ** Self-consistent field cycle
@@ -678,7 +679,7 @@ plt.savefig(path)
 
 ** Figure
 #+begin_src python :results drawer :exports results :noweb yes
-path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-4.png"
+path = "./Figs/Fig-5.png"
 
 plt.clf()
 fig = plt.figure()
@@ -690,7 +691,7 @@ fig.suptitle('Helium atom ground state energy')
 axs[0].plot(range(cnt+1), E_conv, marker='.')
 axs[1].plot(range(cnt+1), dE_conv, marker=".", color='r')
 
-lims = [ [-5.5,-2.5],[-5.5,3.2]]
+lims = [ [-5.5,-1.5],[-5.5,3.2]]
 
 # Hide x labels and tick labels for all but bottom plot.
 for (i,ax) in enumerate(axs):
@@ -708,7 +709,7 @@ plt.savefig(path)
 
 #+RESULTS:
 :results:
-[[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-4.png]]
+[[./Figs/Fig-5.png]]
 :end:
 
 ** The local density Exchange potential
@@ -859,7 +860,7 @@ while cnt < 30 and abs(Ediff) > 1.E-4:
 #+end_src
 *** Main Shoot
 #+begin_src python :results drawer :exports results :noweb yes
-path = "/home/chilkuri/Documents/codes/python/gscf/Fig-tmp5.png"
+path = "./Figs/Fig-6tmp.png"
 
 plt.clf()
 fig, ax = plt.subplots()
@@ -888,7 +889,7 @@ plt.savefig(path)
 
 *** Main
 #+begin_src python :results drawer :exports results :noweb yes
-path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-tmp6.png"
+path = "./Figs/Fig-tmp6.png"
 
 plt.clf()
 fig, ax = plt.subplots()
@@ -922,7 +923,7 @@ plt.savefig(path)
 
 ** Figure
 #+begin_src python :results drawer :exports results :noweb yes
-path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-6.png"
+path = "./Figs/Fig-6.png"
 
 plt.clf()
 fig = plt.figure()
@@ -942,7 +943,7 @@ for (i,ax) in enumerate(axs):
     ax.set_ylim(lims[i])
 
 axs[0].axhline(y = -2.26 , color = 'g', linestyle = '--')
-axs[0].axhline(y = -2.72 , color = 'g', linestyle = '--')
+#axs[0].axhline(y = -2.72 , color = 'g', linestyle = '--')
 axs[0].axhline(y = -2.861, color = 'b', linestyle = '--')
 axs[1].axhline(y = 0., color = 'r', linestyle = '--')
 axs[0].set(ylabel="E(He) (u.a.)")
@@ -954,7 +955,7 @@ plt.savefig(path)
 
 #+RESULTS:
 :results:
-[[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-6.png]]
+[[./Figs/Fig-6.png]]
 :end:
 
 * Export :noexport:
