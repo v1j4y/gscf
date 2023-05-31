@@ -644,7 +644,7 @@ while cnt < 9 and abs(Ediff) > 1.E-4:
 
     cnt += 1
 #+end_src
-*** Main
+*** Main :noexport:
 #+begin_src python :results drawer :exports results :noweb yes
 path = "/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-tmp3.png"
 
@@ -858,7 +858,7 @@ while cnt < 30 and abs(Ediff) > 1.E-4:
 
     cnt += 1
 #+end_src
-*** Main Shoot
+*** Main Shoot :noexport:
 #+begin_src python :results drawer :exports results :noweb yes
 path = "./Figs/Fig-6tmp.png"
 
@@ -887,7 +887,7 @@ plt.savefig(path)
 [[/home/chilkuri/Documents/codes/python/gscf/Fig-tmp5.png]]
 :end:
 
-*** Main
+*** Main :noexport:
 #+begin_src python :results drawer :exports results :noweb yes
 path = "./Figs/Fig-tmp6.png"
 
