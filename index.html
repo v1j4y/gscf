@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-05-30 Tue 22:53 -->
+<!-- 2023-05-31 Wed 11:49 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>General Self-Consistent Field Methods</title>
@@ -269,60 +269,60 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org0a59fc2">1. Introduction</a></li>
-<li><a href="#org1de6442">2. Hydrogen atom</a>
+<li><a href="#org8b8ad5d">1. Introduction</a></li>
+<li><a href="#orga9d9401">2. Hydrogen atom</a>
 <ul>
-<li><a href="#org09853cc">2.1. Methodology</a>
+<li><a href="#org4747f1c">2.1. Methodology</a>
 <ul>
-<li><a href="#org8ae735f">2.1.1. Shooting method</a></li>
-<li><a href="#org3464f36">2.1.2. Code</a></li>
-<li><a href="#orga8d3a37">2.1.3. Plot</a></li>
-<li><a href="#orgba2a4a4">2.1.4. Main</a></li>
-<li><a href="#org7a1194e">2.1.5. Solution of the SLP</a></li>
-<li><a href="#orge1759d5">2.1.6. Code</a></li>
-<li><a href="#org2127292">2.1.7. Testing</a></li>
-<li><a href="#org302d44d">2.1.8. Main</a></li>
+<li><a href="#org11af05d">2.1.1. Shooting method</a></li>
+<li><a href="#org9dab6f8">2.1.2. Code</a></li>
+<li><a href="#org44a3b60">2.1.3. Plot</a></li>
+<li><a href="#org7dccd3d">2.1.4. Main</a></li>
+<li><a href="#org23cb64d">2.1.5. Solution of the SLP</a></li>
+<li><a href="#orgfc77534">2.1.6. Code</a></li>
+<li><a href="#org0f071fa">2.1.7. Testing</a></li>
+<li><a href="#orgbd16121">2.1.8. Main</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#orge7a2079">3. Helium atom</a>
+<li><a href="#orgd1c5d59">3. Helium atom</a>
 <ul>
-<li><a href="#org4c4f1cc">3.1. Poisson equation</a></li>
-<li><a href="#orgc8518c4">3.2. Solution</a>
+<li><a href="#org5f70f2f">3.1. Poisson equation</a></li>
+<li><a href="#orgd8cd354">3.2. Solution</a>
 <ul>
-<li><a href="#org388c2fe">3.2.1. Vector Field</a></li>
-<li><a href="#org3a8252b">3.2.2. Testing</a></li>
-<li><a href="#org9751810">3.2.3. Main</a></li>
+<li><a href="#org7548b0b">3.2.1. Vector Field</a></li>
+<li><a href="#org4024f21">3.2.2. Testing</a></li>
+<li><a href="#org8214e7f">3.2.3. Main</a></li>
 </ul>
 </li>
-<li><a href="#org28186ca">3.3. Self-consistent field cycle</a>
+<li><a href="#org9f11e94">3.3. Self-consistent field cycle</a>
 <ul>
-<li><a href="#org24e119d">3.3.1. Vector Field</a></li>
-<li><a href="#org75c55c1">3.3.2. Calculate energy</a></li>
-<li><a href="#org1f30a64">3.3.3. SCF cycle code</a></li>
-<li><a href="#orgaac03b5">3.3.4. Main</a></li>
+<li><a href="#orge5d7170">3.3.1. Vector Field</a></li>
+<li><a href="#orga9fe277">3.3.2. Calculate energy</a></li>
+<li><a href="#org7cc8504">3.3.3. SCF cycle code</a></li>
+<li><a href="#org2a1405b">3.3.4. Main</a></li>
 </ul>
 </li>
-<li><a href="#org4e10671">3.4. Figure</a></li>
-<li><a href="#org99780d2">3.5. The local density Exchange potential</a>
+<li><a href="#orgb6706d9">3.4. Figure</a></li>
+<li><a href="#orgee47255">3.5. The local density Exchange potential</a>
 <ul>
-<li><a href="#orgb072860">3.5.1. Vector Field</a></li>
-<li><a href="#org6d750fb">3.5.2. Calculate energy</a></li>
-<li><a href="#orge3b7e5f">3.5.3. SCF cycle code</a></li>
-<li><a href="#orgcad4b4c">3.5.4. Main Shoot</a></li>
-<li><a href="#orgcd0df4c">3.5.5. Main</a></li>
+<li><a href="#org1da8a83">3.5.1. Vector Field</a></li>
+<li><a href="#org800006f">3.5.2. Calculate energy</a></li>
+<li><a href="#org9a5e378">3.5.3. SCF cycle code</a></li>
+<li><a href="#org4f89843">3.5.4. Main Shoot</a></li>
+<li><a href="#org6227cc0">3.5.5. Main</a></li>
 </ul>
 </li>
-<li><a href="#org2b913a0">3.6. Figure</a></li>
+<li><a href="#orgba1c1d0">3.6. Figure</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org0a59fc2" class="outline-2">
-<h2 id="org0a59fc2"><span class="section-number-2">1</span> Introduction</h2>
+<div id="outline-container-org8b8ad5d" class="outline-2">
+<h2 id="org8b8ad5d"><span class="section-number-2">1</span> Introduction</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 The Schrodinger equation is a certain class of Boundary Value Problem (BVP).
@@ -361,12 +361,12 @@ of various types of Hamiltonians and analyze their spectra and wavefunctions.
 </div>
 </div>
 
-<div id="outline-container-org1de6442" class="outline-2">
-<h2 id="org1de6442"><span class="section-number-2">2</span> Hydrogen atom</h2>
+<div id="outline-container-orga9d9401" class="outline-2">
+<h2 id="orga9d9401"><span class="section-number-2">2</span> Hydrogen atom</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 We begin with the most simplest SLP which is the solution
-of the Hamiltonian for the hydrogen atom Eq:<a href="#orgeeb693d">1</a>
+of the Hamiltonian for the hydrogen atom Eq:<a href="#org2cfcbd3">1</a>
 </p>
 
 <p>
@@ -376,8 +376,8 @@ of the Hamiltonian for the hydrogen atom Eq:<a href="#orgeeb693d">1</a>
 </p>
 
 <p>
-This is the SLP(Eq:<a href="#org10407ed">1</a>) with \(p(t)=\frac{1}{2}\), and \(g(t)=1\), and \(q(t)=V\), the potential acting
-on the particle. The Eq:<a href="#orgeeb693d">1</a> is in cartesian coordinates \(\mathbf{x}\) and
+This is the SLP(Eq:<a href="#orgc8fb110">1</a>) with \(p(t)=\frac{1}{2}\), and \(g(t)=1\), and \(q(t)=V\), the potential acting
+on the particle. The Eq:<a href="#org2cfcbd3">1</a> is in cartesian coordinates \(\mathbf{x}\) and
 can be transformed to spherical coordinates via a coordinate transformation.
 </p>
 
@@ -449,15 +449,15 @@ p(r) = g(r) = 1
 </p>
 
 <p>
-These (Eq:<a href="#org7b86d6d">1</a>) are the working equations.
+These (Eq:<a href="#orgf14774f">1</a>) are the working equations.
 </p>
 </div>
 
-<div id="outline-container-org09853cc" class="outline-3">
-<h3 id="org09853cc"><span class="section-number-3">2.1</span> Methodology</h3>
+<div id="outline-container-org4747f1c" class="outline-3">
+<h3 id="org4747f1c"><span class="section-number-3">2.1</span> Methodology</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
-First, we transfrom Eq:<a href="#org7b86d6d">1</a> into a set of coupled linear
+First, we transfrom Eq:<a href="#orgf14774f">1</a> into a set of coupled linear
 ODEs
 </p>
 
@@ -477,10 +477,16 @@ The boundary conditions are at \(r=0\) and \(r=\infty\) with
 </div>
 
 <ol class="org-ol">
-<li><a id="org73c8c0f"></a>Vector Field<br />
+<li><a id="orgf7f1952"></a>Vector Field<br />
 <div class="outline-text-5" id="text-2-1-0-1">
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #a020f0;">from</span> imports_all <span style="color: #a020f0;">import</span> *
+<pre class="src src-python"><span style="color: #a020f0;">import</span> numpy <span style="color: #a020f0;">as</span> np
+<span style="color: #a020f0;">from</span> scipy.integrate <span style="color: #a020f0;">import</span> odeint
+<span style="color: #a020f0;">from</span> scipy <span style="color: #a020f0;">import</span> integrate
+<span style="color: #a020f0;">from</span> scipy <span style="color: #a020f0;">import</span> interpolate
+<span style="color: #a020f0;">from</span> scipy.optimize <span style="color: #a020f0;">import</span> root_scalar
+<span style="color: #a020f0;">import</span> matplotlib.pyplot <span style="color: #a020f0;">as</span> plt
+<span style="color: #a020f0;">from</span> copy <span style="color: #a020f0;">import</span> deepcopy
 
 <span style="color: #a020f0;">def</span> <span style="color: #0000ff;">vectorfield</span>(w, t, p):
     <span style="color: #8b2252;">"""</span>
@@ -506,7 +512,7 @@ The boundary conditions are at \(r=0\) and \(r=\infty\) with
 </div>
 </div>
 </li>
-<li><a id="orgbe15ac3"></a>Solution<br />
+<li><a id="org8b65607"></a>Solution<br />
 <div class="outline-text-5" id="text-2-1-0-2">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">solve_SLP</span>(fn=<span style="color: #008b8b;">None</span>, tckfn=<span style="color: #008b8b;">None</span>, fnx=<span style="color: #008b8b;">None</span>, tckfnx=<span style="color: #008b8b;">None</span>, fnc=<span style="color: #008b8b;">None</span>, tckfnc=<span style="color: #008b8b;">None</span>, e1=-0.5, l1=0, z=1., t=<span style="color: #008b8b;">None</span>, numpoints=1600, stoptime=15.0, xlim=0, ylim=-1.0E-6, vectorfield=<span style="color: #008b8b;">None</span>, isWF=<span style="color: #008b8b;">True</span>):
@@ -575,8 +581,8 @@ The boundary conditions are at \(r=0\) and \(r=\infty\) with
 </li>
 </ol>
 
-<div id="outline-container-org8ae735f" class="outline-4">
-<h4 id="org8ae735f"><span class="section-number-4">2.1.1</span> Shooting method</h4>
+<div id="outline-container-org11af05d" class="outline-4">
+<h4 id="org11af05d"><span class="section-number-4">2.1.1</span> Shooting method</h4>
 <div class="outline-text-4" id="text-2-1-1">
 <p>
 Here we start with \(u(\infty)=0\) and integrate towards
@@ -586,8 +592,8 @@ respect to the Hydrogen atom.
 </div>
 </div>
 
-<div id="outline-container-org3464f36" class="outline-4">
-<h4 id="org3464f36"><span class="section-number-4">2.1.2</span> Code</h4>
+<div id="outline-container-org9dab6f8" class="outline-4">
+<h4 id="org9dab6f8"><span class="section-number-4">2.1.2</span> Code</h4>
 <div class="outline-text-4" id="text-2-1-2">
 <p>
 Main function that does the shooting.
@@ -607,36 +613,36 @@ Main function that does the shooting.
 </div>
 </div>
 
-<div id="outline-container-orga8d3a37" class="outline-4">
-<h4 id="orga8d3a37"><span class="section-number-4">2.1.3</span> Plot</h4>
+<div id="outline-container-org44a3b60" class="outline-4">
+<h4 id="org44a3b60"><span class="section-number-4">2.1.3</span> Plot</h4>
 <div class="outline-text-4" id="text-2-1-3">
 <p>
 Plot to check results.
 </p>
 
 <div class="figure">
-<p><img src="file:///home/chilkuri/Documents/codes/python/gscf/Fig-tmp.png" alt="Fig-tmp.png" />
+<p><img src="./Figs/Fig-1.png" alt="Fig-1.png" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgba2a4a4" class="outline-4">
-<h4 id="orgba2a4a4"><span class="section-number-4">2.1.4</span> Main</h4>
+<div id="outline-container-org7dccd3d" class="outline-4">
+<h4 id="org7dccd3d"><span class="section-number-4">2.1.4</span> Main</h4>
 <div class="outline-text-4" id="text-2-1-4">
 <p>
 Make some figures.
 </p>
 
 <div class="figure">
-<p><img src="file:///home/chilkuri/Documents/codes/python/gscf/Fig-1.png" alt="Fig-1.png" />
+<p><img src="./Figs/Fig-2.png" alt="Fig-2.png" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org7a1194e" class="outline-4">
-<h4 id="org7a1194e"><span class="section-number-4">2.1.5</span> Solution of the SLP</h4>
+<div id="outline-container-org23cb64d" class="outline-4">
+<h4 id="org23cb64d"><span class="section-number-4">2.1.5</span> Solution of the SLP</h4>
 <div class="outline-text-4" id="text-2-1-5">
 <p>
 Here we have to search for the value of \(E\)
@@ -647,8 +653,8 @@ routine from <code>scipy</code>.
 </div>
 </div>
 
-<div id="outline-container-orge1759d5" class="outline-4">
-<h4 id="orge1759d5"><span class="section-number-4">2.1.6</span> Code</h4>
+<div id="outline-container-orgfc77534" class="outline-4">
+<h4 id="orgfc77534"><span class="section-number-4">2.1.6</span> Code</h4>
 <div class="outline-text-4" id="text-2-1-6">
 <p>
 The code is as follows
@@ -678,8 +684,8 @@ The code is as follows
 </div>
 </div>
 </div>
-<div id="outline-container-org2127292" class="outline-4">
-<h4 id="org2127292"><span class="section-number-4">2.1.7</span> Testing</h4>
+<div id="outline-container-org0f071fa" class="outline-4">
+<h4 id="org0f071fa"><span class="section-number-4">2.1.7</span> Testing</h4>
 <div class="outline-text-4" id="text-2-1-7">
 <p>
 Test the functions.
@@ -702,15 +708,15 @@ sys.path.append(<span style="color: #8b2252;">'/home/runner/work/gscf/gscf'</spa
 </div>
 </div>
 </div>
-<div id="outline-container-org302d44d" class="outline-4">
-<h4 id="org302d44d"><span class="section-number-4">2.1.8</span> Main</h4>
+<div id="outline-container-orgbd16121" class="outline-4">
+<h4 id="orgbd16121"><span class="section-number-4">2.1.8</span> Main</h4>
 <div class="outline-text-4" id="text-2-1-8">
 <p>
 Make figures.
 </p>
 
 <div class="figure">
-<p><img src="file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-1.png" alt="Fig-1.png" />
+<p><img src="./Figs/Fig-3.png" alt="Fig-3.png" />
 </p>
 </div>
 </div>
@@ -718,8 +724,8 @@ Make figures.
 </div>
 </div>
 
-<div id="outline-container-orge7a2079" class="outline-2">
-<h2 id="orge7a2079"><span class="section-number-2">3</span> Helium atom</h2>
+<div id="outline-container-orgd1c5d59" class="outline-2">
+<h2 id="orgd1c5d59"><span class="section-number-2">3</span> Helium atom</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 Here we need to include the Hartree potential \(V_H\) which is the
@@ -755,11 +761,11 @@ n(r) &= 2\sum_i^{N_{occ}} \left |\frac{u(r)}{r}\right|^2 \\
 </div>
 
 
-<div id="outline-container-org4c4f1cc" class="outline-3">
-<h3 id="org4c4f1cc"><span class="section-number-3">3.1</span> Poisson equation</h3>
+<div id="outline-container-org5f70f2f" class="outline-3">
+<h3 id="org5f70f2f"><span class="section-number-3">3.1</span> Poisson equation</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
-In order to calculate the Hartree potential Eq:<a href="#orgd567887">1</a>, we shall
+In order to calculate the Hartree potential Eq:<a href="#org4d6b129">1</a>, we shall
 transform it into an SLP which we can again solve using the
 above methodology the solution of the Hydrogen atom.
 </p>
@@ -800,11 +806,11 @@ hartree potential \(V_H(r)\).
 </div>
 </div>
 
-<div id="outline-container-orgc8518c4" class="outline-3">
-<h3 id="orgc8518c4"><span class="section-number-3">3.2</span> Solution</h3>
+<div id="outline-container-orgd8cd354" class="outline-3">
+<h3 id="orgd8cd354"><span class="section-number-3">3.2</span> Solution</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
-The BVP Eq:<a href="#org9273bdd">1</a> takes the following boundary conditions
+The BVP Eq:<a href="#orgc4f223e">1</a> takes the following boundary conditions
 </p>
 
 \begin{align*}
@@ -824,11 +830,17 @@ q_{max} = \int_0^{max} \text{d}r\ u^2(r)
 </p>
 </div>
 
-<div id="outline-container-org388c2fe" class="outline-4">
-<h4 id="org388c2fe"><span class="section-number-4">3.2.1</span> Vector Field</h4>
+<div id="outline-container-org7548b0b" class="outline-4">
+<h4 id="org7548b0b"><span class="section-number-4">3.2.1</span> Vector Field</h4>
 <div class="outline-text-4" id="text-3-2-1">
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #a020f0;">from</span> imports_all <span style="color: #a020f0;">import</span> *
+<pre class="src src-python"><span style="color: #a020f0;">import</span> numpy <span style="color: #a020f0;">as</span> np
+<span style="color: #a020f0;">from</span> scipy.integrate <span style="color: #a020f0;">import</span> odeint
+<span style="color: #a020f0;">from</span> scipy <span style="color: #a020f0;">import</span> integrate
+<span style="color: #a020f0;">from</span> scipy <span style="color: #a020f0;">import</span> interpolate
+<span style="color: #a020f0;">from</span> scipy.optimize <span style="color: #a020f0;">import</span> root_scalar
+<span style="color: #a020f0;">import</span> matplotlib.pyplot <span style="color: #a020f0;">as</span> plt
+<span style="color: #a020f0;">from</span> copy <span style="color: #a020f0;">import</span> deepcopy
 
 <span style="color: #a020f0;">def</span> <span style="color: #0000ff;">vectorfieldVH</span>(w, t, p):
     <span style="color: #8b2252;">"""</span>
@@ -853,8 +865,8 @@ q_{max} = \int_0^{max} \text{d}r\ u^2(r)
 </div>
 </div>
 </div>
-<div id="outline-container-org3a8252b" class="outline-4">
-<h4 id="org3a8252b"><span class="section-number-4">3.2.2</span> Testing</h4>
+<div id="outline-container-org4024f21" class="outline-4">
+<h4 id="org4024f21"><span class="section-number-4">3.2.2</span> Testing</h4>
 <div class="outline-text-4" id="text-3-2-2">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #a0522d;">numpoints</span>=400
@@ -868,20 +880,20 @@ q_{max} = \int_0^{max} \text{d}r\ u^2(r)
 </div>
 </div>
 </div>
-<div id="outline-container-org9751810" class="outline-4">
-<h4 id="org9751810"><span class="section-number-4">3.2.3</span> Main</h4>
+<div id="outline-container-org8214e7f" class="outline-4">
+<h4 id="org8214e7f"><span class="section-number-4">3.2.3</span> Main</h4>
 <div class="outline-text-4" id="text-3-2-3">
 
 <div class="figure">
-<p><img src="file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-2.png" alt="Fig-2.png" />
+<p><img src="./Figs/Fig-4.png" alt="Fig-4.png" />
 </p>
 </div>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org28186ca" class="outline-3">
-<h3 id="org28186ca"><span class="section-number-3">3.3</span> Self-consistent field cycle</h3>
+<div id="outline-container-org9f11e94" class="outline-3">
+<h3 id="org9f11e94"><span class="section-number-3">3.3</span> Self-consistent field cycle</h3>
 <div class="outline-text-3" id="text-3-3">
 <p>
 In order to find the solution, we need to perform a SCF loop
@@ -901,8 +913,8 @@ E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
 </div>
 
 
-<div id="outline-container-org24e119d" class="outline-4">
-<h4 id="org24e119d"><span class="section-number-4">3.3.1</span> Vector Field</h4>
+<div id="outline-container-orge5d7170" class="outline-4">
+<h4 id="orge5d7170"><span class="section-number-4">3.3.1</span> Vector Field</h4>
 <div class="outline-text-4" id="text-3-3-1">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">vectorfieldHe</span>(w, t, p):
@@ -929,8 +941,8 @@ E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
 </div>
 </div>
 </div>
-<div id="outline-container-org75c55c1" class="outline-4">
-<h4 id="org75c55c1"><span class="section-number-4">3.3.2</span> Calculate energy</h4>
+<div id="outline-container-orga9fe277" class="outline-4">
+<h4 id="orga9fe277"><span class="section-number-4">3.3.2</span> Calculate energy</h4>
 <div class="outline-text-4" id="text-3-3-2">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">calcEnergy</span>(ei,urf,tckur,nrf,tck,t=<span style="color: #008b8b;">None</span>,stoptime=60.0,numpoints=3200):
@@ -948,8 +960,8 @@ E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
 </div>
 </div>
 </div>
-<div id="outline-container-org1f30a64" class="outline-4">
-<h4 id="org1f30a64"><span class="section-number-4">3.3.3</span> SCF cycle code</h4>
+<div id="outline-container-org7cc8504" class="outline-4">
+<h4 id="org7cc8504"><span class="section-number-4">3.3.3</span> SCF cycle code</h4>
 <div class="outline-text-4" id="text-3-3-3">
 <div class="org-src-container">
 <pre class="src src-python">
@@ -993,8 +1005,8 @@ dE_conv.append(E0)
 </div>
 </div>
 </div>
-<div id="outline-container-orgaac03b5" class="outline-4">
-<h4 id="orgaac03b5"><span class="section-number-4">3.3.4</span> Main</h4>
+<div id="outline-container-org2a1405b" class="outline-4">
+<h4 id="org2a1405b"><span class="section-number-4">3.3.4</span> Main</h4>
 <div class="outline-text-4" id="text-3-3-4">
 <p>
 /tmp/babel-DzBZdg/python-LzHa4M
@@ -1003,19 +1015,19 @@ dE_conv.append(E0)
 </div>
 </div>
 
-<div id="outline-container-org4e10671" class="outline-3">
-<h3 id="org4e10671"><span class="section-number-3">3.4</span> Figure</h3>
+<div id="outline-container-orgb6706d9" class="outline-3">
+<h3 id="orgb6706d9"><span class="section-number-3">3.4</span> Figure</h3>
 <div class="outline-text-3" id="text-3-4">
 
 <div class="figure">
-<p><img src="file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-4.png" alt="Fig-4.png" />
+<p><img src="./Figs/Fig-5.png" alt="Fig-5.png" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org99780d2" class="outline-3">
-<h3 id="org99780d2"><span class="section-number-3">3.5</span> The local density Exchange potential</h3>
+<div id="outline-container-orgee47255" class="outline-3">
+<h3 id="orgee47255"><span class="section-number-3">3.5</span> The local density Exchange potential</h3>
 <div class="outline-text-3" id="text-3-5">
 <p>
 The Hartree potential used above is not the full potential since
@@ -1102,14 +1114,14 @@ The full equation the reads
 </p>
 
 \begin{align*}
-\label{orgd69e3b1}
+\label{org72d8219}
 y &= \begin{pmatrix} u \\ u' \end{pmatrix}\\
 y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ 2\left( \frac{l(l+1)}{r^2} -\frac{\mathcal{Z}}{r} + V_H + V_{\text{x}} - E \right) u \end{pmatrix}\\
 \end{align*}
 </div>
 
-<div id="outline-container-orgb072860" class="outline-4">
-<h4 id="orgb072860"><span class="section-number-4">3.5.1</span> Vector Field</h4>
+<div id="outline-container-org1da8a83" class="outline-4">
+<h4 id="org1da8a83"><span class="section-number-4">3.5.1</span> Vector Field</h4>
 <div class="outline-text-4" id="text-3-5-1">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">vectorfieldX</span>(w, t, p):
@@ -1136,8 +1148,8 @@ y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ 2\left( \f
 </div>
 </div>
 </div>
-<div id="outline-container-org6d750fb" class="outline-4">
-<h4 id="org6d750fb"><span class="section-number-4">3.5.2</span> Calculate energy</h4>
+<div id="outline-container-org800006f" class="outline-4">
+<h4 id="org800006f"><span class="section-number-4">3.5.2</span> Calculate energy</h4>
 <div class="outline-text-4" id="text-3-5-2">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">calcEnergyVx</span>(ei,urf,tckur,urxf,tckurx,nrf,tck,t=<span style="color: #008b8b;">None</span>,stoptime=60.0,numpoints=3200):
@@ -1156,8 +1168,8 @@ y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ 2\left( \f
 </div>
 </div>
 </div>
-<div id="outline-container-orge3b7e5f" class="outline-4">
-<h4 id="orge3b7e5f"><span class="section-number-4">3.5.3</span> SCF cycle code</h4>
+<div id="outline-container-org9a5e378" class="outline-4">
+<h4 id="org9a5e378"><span class="section-number-4">3.5.3</span> SCF cycle code</h4>
 <div class="outline-text-4" id="text-3-5-3">
 <div class="org-src-container">
 <pre class="src src-python">
@@ -1206,8 +1218,8 @@ dE_conv.append(E0)
 </div>
 </div>
 </div>
-<div id="outline-container-orgcad4b4c" class="outline-4">
-<h4 id="orgcad4b4c"><span class="section-number-4">3.5.4</span> Main Shoot</h4>
+<div id="outline-container-org4f89843" class="outline-4">
+<h4 id="org4f89843"><span class="section-number-4">3.5.4</span> Main Shoot</h4>
 <div class="outline-text-4" id="text-3-5-4">
 
 <div class="figure">
@@ -1217,8 +1229,8 @@ dE_conv.append(E0)
 </div>
 </div>
 
-<div id="outline-container-orgcd0df4c" class="outline-4">
-<h4 id="orgcd0df4c"><span class="section-number-4">3.5.5</span> Main</h4>
+<div id="outline-container-org6227cc0" class="outline-4">
+<h4 id="org6227cc0"><span class="section-number-4">3.5.5</span> Main</h4>
 <div class="outline-text-4" id="text-3-5-5">
 
 <div class="figure">
@@ -1229,12 +1241,12 @@ dE_conv.append(E0)
 </div>
 </div>
 
-<div id="outline-container-org2b913a0" class="outline-3">
-<h3 id="org2b913a0"><span class="section-number-3">3.6</span> Figure</h3>
+<div id="outline-container-orgba1c1d0" class="outline-3">
+<h3 id="orgba1c1d0"><span class="section-number-3">3.6</span> Figure</h3>
 <div class="outline-text-3" id="text-3-6">
 
 <div class="figure">
-<p><img src="file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-6.png" alt="Fig-6.png" />
+<p><img src="./Figs/Fig-6.png" alt="Fig-6.png" />
 </p>
 </div>
 </div>
@@ -1243,7 +1255,7 @@ dE_conv.append(E0)
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Vijay Gopal Chilkuri</p>
-<p class="date">Created: 2023-05-30 Tue 22:53</p>
+<p class="date">Created: 2023-05-31 Wed 11:49</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
