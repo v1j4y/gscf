@@ -105,10 +105,10 @@ $\psi(\mathbf{x})=R(r)\Theta(\theta)\Phi(\phi)$ to obtain three separate SLPs
 \]
 
 \[
-\frac{1}{\sin{\theta}}\left (-\frac{\partial}{\partial \theta} \left( \sin{\theta} \frac{\partial}{\partial \theta} \right)+ \frac{m^2}{\sin{\theta}} \right)\Theta(\theta) = l(l+1)
+\frac{1}{\sin{\theta}}\left (-\frac{\partial}{\partial \theta} \left( \sin{\theta} \frac{\partial}{\partial \theta} \right)+ \frac{m^2}{\sin{\theta}} \right)\Theta(\theta) = l(l+1)\Theta(\theta)
 \]
 \[
-\Theta(\theta)-\frac{\partial^2}{\partial \phi^2}\Phi(\phi) = m^2 \Phi(\phi)
+-\frac{\partial^2}{\partial \phi^2}\Phi(\phi) = m^2 \Phi(\phi)
 \]
 
 With only $r$ being the dependent variable i.e. the first equation.
