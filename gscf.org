@@ -247,7 +247,7 @@ def shoot(E, t, l=0, z=1., fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None,
       print("[shoot] Error: Have to supply a vectorfield")
       return(0,0,0,0)
    u,fnout,tckfnout= solve_SLP(fn=fn, tckfn=None, fnx=fnx, tckfnx=tckfnx, fnc=fnc, tckfnc=tckfnc, e1=E, l1=l, z=z, t=t, xlim=xlim, ylim=ylim, vectorfield=vectorfield, isWF=isWF)
-   u = u/t**l
+
 
    # Extrapolate u to the origin r=0.
    return u[0] - t[0] * (u[1] - u[0])/(t[1] - t[0]), u, fnout, tckfnout
@@ -674,7 +674,7 @@ plt.savefig(path)
 
 #+RESULTS:
 :results:
-/tmp/babel-DzBZdg/python-LzHa4M
+/tmp/babel-yGLMPE/python-gCJrkO
 :end:
 
 ** Figure
@@ -884,29 +884,29 @@ plt.savefig(path)
 
 #+RESULTS:
 :results:
-[[/home/chilkuri/Documents/codes/python/gscf/Fig-tmp5.png]]
+[[./Figs/Fig-6tmp.png]]
 :end:
 
-*** Main :noexport:
+*** The Exchange hole
+
+The exchange hole is a result of the electron-electron interaction which is
+missing in the Kohn-Sham model hamiltonian. This is the part that the
+functional is supposed to recover.
+
+Here, we can see the form of the exchange hole which shows up as a cusp
+at when the two electrons approach each other.
+
+
 #+begin_src python :results drawer :exports results :noweb yes
-path = "./Figs/Fig-tmp6.png"
+path = "./Figs/Fig-7.png"
 
 plt.clf()
 fig, ax = plt.subplots()
 
 numpoints=3200
-stoptime=60.0
-rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
-#E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-0.40,vectorfield=vectorfield)
-#E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-0.15,vectorfield=vectorfield)
-#E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-0.05,vectorfield=vectorfield)
-
-#E_bound,_,nrf,tck = get_energy_and_density(0,rr,E=-2.10,vectorfield=vectorfieldHe)
-#E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-2.00,vectorfield=vectorfieldX, urf=urf, tckur=tckur, fnx=urxf, tckfnx=tckur)
-#print(E_bound)
-xa  = [np.sqrt(4)*x*np.exp(-x) for x in rr]
-x1n = [nrf_orig(x,tck_orig) for x in rr]
-plt.plot(rr, x1n)
+stoptime=10.0
+rr = np.array([stoptime * float(i+-0.0001) / (numpoints - 1) for i in range(numpoints)])
+xa  = [urxf(x,nrf,tck) for x in rr]
 plt.plot(rr, xa)
 plt.grid()
 plt.xlabel("r")
@@ -918,7 +918,7 @@ plt.savefig(path)
 
 #+RESULTS:
 :results:
-[[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-tmp6.png]]
+[[./Figs/Fig-7.png]]
 :end:
 
 ** Figure
