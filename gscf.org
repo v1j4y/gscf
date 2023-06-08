@@ -246,7 +246,7 @@ def shoot(E, t, l=0, z=1., fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None,
    if vectorfield is None:
       print("[shoot] Error: Have to supply a vectorfield")
       return(0,0,0,0)
-   u,fnout,tckfnout= solve_SLP(fn=fn, tckfn=None, fnx=fnx, tckfnx=tckfnx, fnc=fnc, tckfnc=tckfnc, e1=E, l1=l, z=z, t=t, xlim=xlim, ylim=ylim, vectorfield=vectorfield, isWF=isWF)
+   u,fnout,tckfnout= solve_SLP(fn=fn, tckfn=tckfn, fnx=fnx, tckfnx=tckfnx, fnc=fnc, tckfnc=tckfnc, e1=E, l1=l, z=z, t=t, xlim=xlim, ylim=ylim, vectorfield=vectorfield, isWF=isWF)
 
 
    # Extrapolate u to the origin r=0.
@@ -301,6 +301,9 @@ plt.savefig(path)
 # expands this org source code block
 "[["+path+"]]"
 #+END_SRC
+
+#+RESULTS: dressPath
+| ./Figs/Fig-1.png |
 
 *** Main
 Make some figures.
@@ -566,6 +569,16 @@ incorporate the Hartee potential
 E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
 \]
 
+The full equation the reads
+
+#+Label: Eq16
+\begin{align*}
+y &= \begin{pmatrix} u \\ u' \end{pmatrix}\\
+y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ 2\left( \frac{l(l+1)}{r^2} -\frac{\mathcal{Z}}{r} + (2V_H - V_H) + V_{\text{x}} - E \right) u \end{pmatrix}\\
+\end{align*}
+
+where we have subtracted the self energy which for the case of the
+Helium atom is exactly known to be $V_H$.
 
 *** Vector Field
 #+begin_src python :results silent :tangle src/helium.py
@@ -581,7 +594,7 @@ def vectorfieldHe(w, t, p):
               p = [m1,m2,k1,k2,L1,L2,b1,b2]
     """
     x1, y1 = w
-    e1, l1, urf, tckur, z = p
+    e1, l1, urf, tckur, _, _, _, _, z = p
 
     # Create f = (x1',y1'):
     f = [y1,
@@ -612,7 +625,7 @@ numpoints=3200
 rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
 
 # Get initial density
-E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-1.50,vectorfield=vectorfield)
+E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-1.50,vectorfield=vectorfieldHe)
 
 # Get initial ur
 qmax = 1.
@@ -631,7 +644,7 @@ Ediff = 10.
 while cnt < 9 and abs(Ediff) > 1.E-4:
 
     # Get density
-    E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-1.50,vectorfield=vectorfield, urf=urf, tckur=tckur)
+    E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-1.50,vectorfield=vectorfieldHe, urf=urf, tckur=tckur)
     # Get ur
     x1,urf,tckur = solve_SLP(fn=nrf, tckfn=tck, t=rr, xlim=xlim, ylim=ylim, vectorfield=vectorfieldVH, isWF=False)
     E1 = calcEnergy(E_bound, urf, tckur, nrf, tck,t=rr)
@@ -674,7 +687,7 @@ plt.savefig(path)
 
 #+RESULTS:
 :results:
-/tmp/babel-yGLMPE/python-gCJrkO
+[[/home/chilkuri/Documents/codes/python/gscf/Figs/Fig-tmp3.png]]
 :end:
 
 ** Figure
@@ -772,7 +785,7 @@ The full equation the reads
 #+Label: Eq16
 \begin{align*}
 y &= \begin{pmatrix} u \\ u' \end{pmatrix}\\
-y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ 2\left( \frac{l(l+1)}{r^2} -\frac{\mathcal{Z}}{r} + V_H + V_{\text{x}} - E \right) u \end{pmatrix}\\
+y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ 2\left( \frac{l(l+1)}{r^2} -\frac{\mathcal{Z}}{r} + 2V_H + V_{\text{x}} - E \right) u \end{pmatrix}\\
 \end{align*}
 
 *** Vector Field
@@ -793,7 +806,7 @@ def vectorfieldX(w, t, p):
 
     # Create f = (x1',y1'):
     f = [y1,
-         2*(l1*(l1+1)/(t)**2 - z/(t) - e1 + 2*urf(t,tckur)/t + uxrf(t,nrf,tck) )*x1
+         2*(l1*(l1+1)/(t)**2 - z/(t) - e1 + 2*urf(t,tckur)/t + urxf(t,nrf,tck) )*x1
          ]
 
     return f
@@ -801,16 +814,15 @@ def vectorfieldX(w, t, p):
 *** Calculate energy
 #+begin_src python :results silent :tangle src/helium.py
 def calcEnergyVx(ei,urf,tckur,urxf,tckurx,nrf,tck,t=None,stoptime=60.0,numpoints=3200):
-    E = 2*ei
     if t is None:
         t = [stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)]
-    VHl = np.array([urf(x,tckur)/x for x in t])
+    VHl = 2*np.array([urf(x,tckur)/x for x in t])
     Vxl = np.array([urxf(x,nrf,tck) for x in t])
     ur2 = np.array([(nrf(x,tck))**2 for x in t])
     eH = integrate.simps(VHl*ur2, x=t)
     ex = integrate.simps(Vxl*ur2, x=t)
     print((eH, (ex/2)))
-    E = E - eH + (ex/2)
+    E = 2*ei - eH - (ex/2)
     return(E)
 #+end_src
 *** SCF cycle code
@@ -818,10 +830,10 @@ def calcEnergyVx(ei,urf,tckur,urxf,tckurx,nrf,tck,t=None,stoptime=60.0,numpoints
 
 stoptime=60.0
 numpoints=3200
-rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
+rr = np.array([stoptime * float(i+0.00001) / (numpoints - 1) for i in range(numpoints)])
 
 # Get initial density
-E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-2.50,vectorfield=vectorfield)
+E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-2.50,vectorfield=vectorfieldHe)
 
 # Get initial ur
 qmax = 1.
@@ -834,7 +846,7 @@ print(E_bound, E0)
 def urxf(x,nrf,tck):
     numer = 3.*nrf(x,tck)*nrf(x,tck)
     denom = 2.*np.pi*np.pi*x*x
-    return(-np.power(numer/denom,1/3))
+    return(-np.cbrt(numer/denom))
 
 E_conv = []
 dE_conv = []
@@ -845,7 +857,7 @@ Ediff = 10.
 while cnt < 30 and abs(Ediff) > 1.E-4:
 
     # Get density
-    E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-1.00,vectorfield=vectorfieldX, urf=urf, tckur=tckur, fnx=urxf, tckfnx=tckur, fnc=nrf, tckfnc=tck)
+    E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-1.00,vectorfield=vectorfieldX, urf=urf, tckur=tckur, fnx=urxf, tckfnx=tck, fnc=nrf, tckfnc=tck)
     # Get ur
     x1,urf,tckur = solve_SLP(fn=nrf, tckfn=tck, t=rr, xlim=xlim, ylim=ylim, vectorfield=vectorfieldVH, isWF=False)
     E1 = calcEnergyVx(E_bound, urf, tckur, urxf, tckur, nrf, tck, t=rr)
@@ -858,6 +870,7 @@ while cnt < 30 and abs(Ediff) > 1.E-4:
 
     cnt += 1
 #+end_src
+
 *** Main Shoot :noexport:
 #+begin_src python :results drawer :exports results :noweb yes
 path = "./Figs/Fig-6tmp.png"
@@ -867,10 +880,10 @@ fig, ax = plt.subplots()
 
 numpoints=3200
 stoptime=60.0
-rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
-EE = np.linspace(-2.1, 0.1, 100)
+rr = np.array([stoptime * float(i+-0.0001) / (numpoints - 1) for i in range(numpoints)])
+EE = np.linspace(-1., 0.1, 100)
 u0s = [
-    shoot(E, rr, l=0, z=2., vectorfield=vectorfieldX, fn=urf, tckfn=tckur, fnx=urxf, tckfnx=tckur)[0] for E in EE
+    shoot(E, rr, l=0, z=2., vectorfield=vectorfieldX, fn=urf, tckfn=tckur, fnx=urxf, tckfnx=tck, fnc=nrf, tckfnc=tck)[0] for E in EE
 ]
 
 plt.plot(EE, u0s)
@@ -903,12 +916,21 @@ path = "./Figs/Fig-7.png"
 plt.clf()
 fig, ax = plt.subplots()
 
+def urxf(x,nrf,tck):
+    numer = 3.*nrf(x,tck)*nrf(x,tck)
+    denom = 2.*np.pi*np.pi*x*x
+    return(-np.power(numer/denom,1/3))
+
 numpoints=3200
 stoptime=10.0
-rr = np.array([stoptime * float(i+-0.0001) / (numpoints - 1) for i in range(numpoints)])
+rr = np.array([stoptime * float(i+0.00001) / (numpoints - 1) for i in range(numpoints)])
 xa  = [urxf(x,nrf,tck) for x in rr]
+x1  = [urf(x,tckur)/x for x in rr]
 plt.plot(rr, xa)
+plt.plot(rr, x1)
 plt.grid()
+plt.ylim(-2,2)
+plt.legend(["V_x","V_H"])
 plt.xlabel("r")
 plt.ylabel("u(0)")
 
@@ -942,8 +964,7 @@ for (i,ax) in enumerate(axs):
     ax.label_outer()
     ax.set_ylim(lims[i])
 
-axs[0].axhline(y = -2.26 , color = 'g', linestyle = '--')
-#axs[0].axhline(y = -2.72 , color = 'g', linestyle = '--')
+axs[0].axhline(y = -2.72 , color = 'g', linestyle = '--')
 axs[0].axhline(y = -2.861, color = 'b', linestyle = '--')
 axs[1].axhline(y = 0., color = 'r', linestyle = '--')
 axs[0].set(ylabel="E(He) (u.a.)")

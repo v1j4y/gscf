@@ -2,19 +2,6 @@
 
 </div>
 
-<div class="SETUP drawer">
-
-``` python
-import numpy as np
-from scipy.integrate import odeint
-from scipy import integrate
-from scipy import interpolate
-from scipy.optimize import root_scalar
-import matplotlib.pyplot as plt
-```
-
-</div>
-
 # Introduction
 
 The Schrodinger equation is a certain class of Boundary Value Problem
@@ -88,9 +75,9 @@ $$
 $$
 
 $$
-\frac{1}{\sin{\theta}}\left (-\frac{\partial}{\partial \theta} \left( \sin{\theta} \frac{\partial}{\partial \theta} \right)+ \frac{m^2}{\sin{\theta}} \right)\Theta(\theta) = l(l+1)
+\frac{1}{\sin{\theta}}\left (-\frac{\partial}{\partial \theta} \left( \sin{\theta} \frac{\partial}{\partial \theta} \right)+ \frac{m^2}{\sin{\theta}} \right)\Theta(\theta) = l(l+1)\Theta(\theta)
 $$ $$
-\Theta(\theta)-\frac{\partial^2}{\partial \phi^2}\Phi(\phi) = m^2 \Phi(\phi)
+-\frac{\partial^2}{\partial \phi^2}\Phi(\phi) = m^2 \Phi(\phi)
 $$
 
 With only $r$ being the dependent variable i.e. the first equation. Here
@@ -125,6 +112,8 @@ $u(\infty)=0$.
 Vector Field
 
 ``` python
+<<importall>>
+
 def vectorfield(w, t, p):
     """
     Defines the differential equations for the coupled spring-mass system.
@@ -227,26 +216,10 @@ def shoot(E, t, l=0, z=1., fn=None, tckfn=None, fnx=None, tckfnx=None, fnc=None,
       print("[shoot] Error: Have to supply a vectorfield")
       return(0,0,0,0)
    u,fnout,tckfnout= solve_SLP(fn=fn, tckfn=None, fnx=fnx, tckfnx=tckfnx, fnc=fnc, tckfnc=tckfnc, e1=E, l1=l, z=z, t=t, xlim=xlim, ylim=ylim, vectorfield=vectorfield, isWF=isWF)
-   u = u/t**l
+
 
    # Extrapolate u to the origin r=0.
    return u[0] - t[0] * (u[1] - u[0])/(t[1] - t[0]), u, fnout, tckfnout
-```
-
-### Testing
-
-Test the function.
-
-``` python
-rr = np.logspace(-6, 5, 500)
-numpoints=400
-stoptime=15.0
-rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
-EE = [-1.1]
-u0s = [
-    shoot(EE[0], rr, l=0, vectorfield=vectorfield)[0] for E in EE
-]
-
 ```
 
 ### Plot
@@ -255,11 +228,9 @@ Plot to check results.
 
 <div class="RESULTS drawer">
 
-![](file:///home/chilkuri/Documents/codes/python/gscf/Fig-tmp.png)
+![](./Figs/Fig-1.png)
 
 </div>
-
-### Plots
 
 ### Main
 
@@ -267,7 +238,7 @@ Make some figures.
 
 <div class="RESULTS drawer">
 
-![](file:///home/chilkuri/Documents/codes/python/gscf/Fig-1.png)
+![](./Figs/Fig-2.png)
 
 </div>
 
@@ -308,10 +279,19 @@ def get_energy_and_density(l,rr,z=1.,E=None, vectorfield=None, urf=None, tckur=N
 Test the functions.
 
 ``` python
-numpoints=3200
-stoptime=60.0
-rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
-E_bound,_,_,_ = get_energy_and_density(0,rr,vectorfield=vectorfield)
+import sys
+# the mock-0.3.1 dir contains testcase.py, testutils.py & mock.py
+sys.path.append('/home/runner/work/gscf/gscf/src')
+sys.path.append('/home/runner/work/gscf/gscf')
+
+import numpy as np
+
+from src.hydrogen import get_energy_and_density, vectorfield
+
+def test_hydrogen(numpoints=3200, stoptime=60):
+    rr = np.array([stoptime * float(i+0.0001) / (numpoints - 1) for i in range(numpoints)])
+    E_bound,_,_,_ = get_energy_and_density(0,rr,vectorfield=vectorfield)
+    abs(E_bound - 0.5) <= 1.0E-10
 ```
 
 ### Main
@@ -320,7 +300,7 @@ Make figures.
 
 <div class="RESULTS drawer">
 
-![](file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-1.png)
+![](./Figs/Fig-3.png)
 
 </div>
 
@@ -386,6 +366,8 @@ $$
 ### Vector Field
 
 ``` python
+<<importall>>
+
 def vectorfieldVH(w, t, p):
     """
     Defines the differential equations for the coupled spring-mass system.
@@ -423,7 +405,7 @@ x1,urf,tckur = solve_SLP(fn=nrf, tckfn=tck, t=rr, xlim=xlim, ylim=ylim, vectorfi
 
 <div class="RESULTS drawer">
 
-![](file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-2.png)
+![](./Figs/Fig-4.png)
 
 </div>
 
@@ -438,6 +420,11 @@ the Hartee potential
 $$
 E = 2 \epsilon - \int \text{d}r\ V_H(r) u^2(r)
 $$
+
+The full equation the reads
+
+where we have subtracted the self energy which for the case of the
+Helium atom is exactly known to be $V_H$.
 
 ### Vector Field
 
@@ -522,19 +509,11 @@ while cnt < 9 and abs(Ediff) > 1.E-4:
     cnt += 1
 ```
 
-### Main
-
-<div class="RESULTS drawer">
-
-/tmp/babel-DzBZdg/python-LzHa4M
-
-</div>
-
 ## Figure
 
 <div class="RESULTS drawer">
 
-![](file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-4.png)
+![](./Figs/Fig-5.png)
 
 </div>
 
@@ -668,7 +647,7 @@ Ediff = 10.
 while cnt < 30 and abs(Ediff) > 1.E-4:
 
     # Get density
-    E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-1.00,vectorfield=vectorfieldX, urf=urf, tckur=tckur, fnx=urxf, tckfnx=tckur, fnc=nrf, tckfnc=tck)
+    E_bound,_,nrf,tck = get_energy_and_density(0,rr,z=2.,E=-1.00,vectorfield=vectorfieldX, urf=urf, tckur=tckur, fnx=urxf, tckfnx=tck, fnc=nrf, tckfnc=tck)
     # Get ur
     x1,urf,tckur = solve_SLP(fn=nrf, tckfn=tck, t=rr, xlim=xlim, ylim=ylim, vectorfield=vectorfieldVH, isWF=False)
     E1 = calcEnergyVx(E_bound, urf, tckur, urxf, tckur, nrf, tck, t=rr)
@@ -682,19 +661,18 @@ while cnt < 30 and abs(Ediff) > 1.E-4:
     cnt += 1
 ```
 
-### Main Shoot
+### The Exchange hole
+
+The exchange hole is a result of the electron-electron interaction which
+is missing in the Kohn-Sham model hamiltonian. This is the part that the
+functional is supposed to recover.
+
+Here, we can see the form of the exchange hole which shows up as a cusp
+at when the two electrons approach each other.
 
 <div class="RESULTS drawer">
 
-![](file:///home/chilkuri/Documents/codes/python/gscf/Fig-tmp5.png)
-
-</div>
-
-### Main
-
-<div class="RESULTS drawer">
-
-![](file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-tmp6.png)
+![](./Figs/Fig-7.png)
 
 </div>
 
@@ -702,6 +680,6 @@ while cnt < 30 and abs(Ediff) > 1.E-4:
 
 <div class="RESULTS drawer">
 
-![](file:///home/chilkuri/Documents/codes/python/gscf/Figs/Fig-6.png)
+![](./Figs/Fig-6.png)
 
 </div>
