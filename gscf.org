@@ -574,7 +574,7 @@ The full equation the reads
 #+Label: Eq16
 \begin{align*}
 y &= \begin{pmatrix} u \\ u' \end{pmatrix}\\
-y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ 2\left( \frac{l(l+1)}{r^2} -\frac{\mathcal{Z}}{r} + (2V_H - V_H) + V_{\text{x}} - E \right) u \end{pmatrix}\\
+y' &= \begin{pmatrix} u' \\ u'' \end{pmatrix} = \begin{pmatrix} u' \\ 2\left( \frac{l(l+1)}{r^2} -\frac{\mathcal{Z}}{r} + (2V_H - V_H)  - E \right) u \end{pmatrix}\\
 \end{align*}
 
 where we have subtracted the self energy which for the case of the
